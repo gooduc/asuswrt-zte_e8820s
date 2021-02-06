@@ -1,3 +1,4 @@
+# AsusWRT zte_e8820s support by nanchuci
 # AsusWRT Xiaomi
 This is version of AsusWRT that works with Xiaomi Mi routers, based on MT7621 CPU.
 
