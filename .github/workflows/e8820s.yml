@@ -1,0 +1,75 @@
+# <https://github.com/nanchuci/E8820S-merlin/edit/master/.github/workflows/E8820S.yml>
+#
+#修改以下代码或者开启触发开关都好，要严格按格式对好,前面有多少空格也要看清楚
+#
+# This is a basic workflow to help you get started with Actions
+
+name: build_E8820S-asuswrt
+
+on: 
+  release:
+    types: [published]
+
+#编辑任意指定文件触发开始编译(去掉下面5个#开启,最下面一行是指定修改什么文件就触发编译,我现在是修改diy.config文件触发)
+#  push:
+#    branches:
+#      - master
+#    paths:
+#      - '.config'
+
+
+#release发布触发开始编译(只是一个触发条件,不会发布的,又麻烦,没卵用,不用研究)
+#  release:
+#    types: published
+
+
+#定时触发开始编译(开启定时编译请先关闭SSH,要不然SSH没人管,会卡SSH编译失败)
+  schedule:
+    - cron: 0 20 * * *
+
+
+#点☆Star触发开始编译
+  watch:
+    types: started
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    if: github.event.repository.owner.id == github.event.sender.id
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt-get install libncurses5 libncurses5-dev libgdbm-dev libgdbm5 m4 bison gawk flex libstdc++-4.8-dev g++-multilib g++ gcc gengetopt git gitk zlib1g-dev automake autoconf autopoint libtool shtool autogen mtd-utils intltool sharutils docbook-xsl-* libstdc++5 texinfo dos2unix xsltproc binutils u-boot-tools device-tree-compiler python qemu gperf liblzo2-dev uuid-dev build-essential lzma-dev liblzma-dev lzma patch cmake intltool libglib2.0-dev gtk-doc-tools libc6-i386 lib32stdc++6 lib32z1 libelf1:i386 lib32ncurses5 libc6-dev-i386 libstdc++6:i386
+    - name: Clone source code
+      run: |
+        git clone https://github.com/nanchuci/asuswrt-e8820s.git /opt/asus
+    - name: Build Firmware
+      run: |
+        cd /opt/asus
+        sudo chmod +x build
+        sudo ./build
+    - name : Upload packages
+      uses: actions/upload-artifact@master
+      if: always()
+      with:
+        name: E8820S-asuswrt-packages
+        path: /opt/asus/release/src-ra-5010/image
+    - name: Upload firmware to cowtransfer
+      if: always()
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer cow --block 2621440 -s -p 64 --no-progress /opt/asus/release/src-ra-5010/image 2>&1 | tee cowtransfer.log
+        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
+    - name: Upload firmware to WeTransfer
+      if: always()
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer wet -s -p 16 --no-progress /opt/asus/release/src-ra-5010/image 2>&1 | tee wetransfer.log
+        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
