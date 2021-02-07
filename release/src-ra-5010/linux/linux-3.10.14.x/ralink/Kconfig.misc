@@ -23,6 +23,10 @@ config  MODEL_RTN800HP
     bool "RT-N800HP"
     default n
 
+config  MODEL_RTE8820S
+	bool "RT-E8820S"
+	default n
+
 config  MODEL_RTMIR3G
 	bool "RT-MIR3G"
 	default n
