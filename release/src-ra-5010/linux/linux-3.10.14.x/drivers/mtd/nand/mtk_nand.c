@@ -2230,7 +2230,7 @@ int mtk_nand_exec_write_page(struct mtd_info *mtd, u32 u4RowAddr, u32 u4PageSize
     PFM_BEGIN(pfm_time_write);
     if (((u32) pPageBuf % 16) && local_buffer_16_align)
     {
-        //printk(KERN_INFO "Data buffer not 16 bytes aligned: %p\n", pPageBuf);
+        printk(KERN_INFO "Data buffer not 16 bytes aligned: %p\n", pPageBuf);
         memcpy(local_buffer_16_align, pPageBuf, mtd->writesize);
         buf = local_buffer_16_align;
     } else
@@ -4814,6 +4814,38 @@ int mtk_nand_probe()
     }
 #endif
 
+#if defined(CONFIG_MODEL_RTE8820S)
+#if defined (__KERNEL_NAND__)
+    // magic for newly flashed E8820S
+    part_num--;
+    for (i = 0; i < 2; i++) {
+        u_char data[4];
+        int offset = 0;
+        // check if there is a new trx image
+        if (ranand_read(data, 0x60003c - 0x400000 * i, 4) != 4)
+            continue; // something bad happened
+        if (data[0] != 169)
+            continue;
+        offset = data[3] + data[2] * 256 + data[1] * 65536;
+        if (offset < 1048576 || offset > 2097152)
+            continue;
+        offset += 0x600000 - 0x400000 * i;
+        if (ranand_read(data, offset, 4) != 4)
+            continue;
+        if (data[0] != 'h' || data[1] != 's' || data[2] != 'q' || data[3] != 's')
+            continue;
+        // new trx image
+        g_pasStatic_Partition[10].offset = offset;
+        part_num++;
+        if (!i) { // image flashed to 2nd partition, swap linux and linux2
+            g_pasStatic_Partition[6].offset -= 0x400000;
+            g_pasStatic_Partition[4].offset += 0x400000;
+        }
+        break;
+    }
+	err = add_mtd_partitions(mtd, g_pasStatic_Partition, part_num);
+#endif
+#else
 #ifdef PMT
     nand_chip->chipsize -= (PMT_POOL_SIZE) << nand_chip->phys_erase_shift;
     mtd->size = nand_chip->chipsize;	
@@ -4996,9 +5028,6 @@ int mtk_nand_probe()
 	    trx_firmware_size = TRX_FIRMWARE_SIZE * i;
 
         offs = LARGE_MTD_BOOT_PART_SIZE + LARGE_MTD_CONFIG_PART_SIZE + (LARGE_MTD_FACTORY_PART_SIZE*2) + trx_firmware_size;
-// Xiaomi
-        offs = 0x600000;
-// Xiaomi
 
         len =  ranand_read((u_char *)(&hdr), offs, sizeof(hdr));
    
@@ -5025,8 +5054,8 @@ int mtk_nand_probe()
     
         if (rfs_offset != 0) {
             MSG(INIT, "[mtk_nand] Line = %d!\n", __LINE__);
-            g_pasStatic_Partition[4 + shift].offset = offs + trx_firmware_size;
-            g_pasStatic_Partition[5 + shift].offset = offs + trx_firmware_size + rfs_offset;
+    	    g_pasStatic_Partition[4 + shift].offset = LARGE_MTD_BOOT_PART_SIZE + LARGE_MTD_CONFIG_PART_SIZE + (LARGE_MTD_FACTORY_PART_SIZE*2) + trx_firmware_size;
+            g_pasStatic_Partition[5 + shift].offset = LARGE_MTD_BOOT_PART_SIZE + LARGE_MTD_CONFIG_PART_SIZE + (LARGE_MTD_FACTORY_PART_SIZE*2) + trx_firmware_size + rfs_offset;
             g_pasStatic_Partition[5 + shift].mask_flags |= MTD_WRITEABLE;
        
             if (mtd->size > 0x800000) {
@@ -5044,19 +5073,9 @@ int mtk_nand_probe()
     }
 //----- asus add
 
-// Xiaomi
-	g_pasStatic_Partition[1].offset = 0x1e0000;
-	g_pasStatic_Partition[2].offset = 0x100000;
-	g_pasStatic_Partition[3].offset = 0x120000;
-	g_pasStatic_Partition[6].offset = 0x3800000;
-	g_pasStatic_Partition[6].size = 0x2800000;
-#if defined CONFIG_MODEL_RTMIR3P
-	g_pasStatic_Partition[2].offset = 0xc0000;
-	g_pasStatic_Partition[6].size = 0xa000000;
-#endif
-// Xiaomi
 	err = add_mtd_partitions(mtd, g_pasStatic_Partition, part_num);
 	//err = mtd_device_register(mtd, g_pasStatic_Partition, part_num);
+#endif
 #endif
 #endif
 
