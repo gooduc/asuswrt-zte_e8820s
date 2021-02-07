@@ -527,7 +527,7 @@ define platformKernelConfig
 		sed -i "/CONFIG_RTMP_FLASH_SUPPORT/d" $(1); \
 		echo "CONFIG_RTMP_FLASH_SUPPORT=y" >>$(1); \
 		sed -i "/CONFIG_LED_CONTROL_SUPPORT/d" $(1); \
-		echo "# CONFIG_LED_CONTROL_SUPPORT is not set" >>$(1); \
+		echo "CONFIG_LED_CONTROL_SUPPORT=y" >>$(1); \
 		sed -i "/CONFIG_ATE_SUPPORT/d" $(1); \
 		echo "# CONFIG_ATE_SUPPORT is not set" >>$(1); \
 		sed -i "/CONFIG_RT2860V2_AP_32B_DESC/d" $(1); \
@@ -569,7 +569,7 @@ define platformKernelConfig
 			sed -i "/CONFIG_RLT_MAC/d" $(1); \
 			echo "#CONFIG_RLT_MAC is not set" >>$(1); \
 		fi; \
-		if [ "$(RTN56UB1)" = "y" ] ||  [ "$(RTN56UB2)" = "y" ] || [ "$(RTMIR3G)" = "y" ] || [ "$(RTMIR3P)" = "y" ] || [ "$(RTMIR4A)" = "y" ] || [ "$(RTRM2100)" = "y" ] || [ "$(RTR2100)" = "y" ]; then \
+		if [ "$(RTN56UB1)" = "y" ] ||  [ "$(RTN56UB2)" = "y" ] || [ "$(RTMIR3G)" = "y" ] || [ "$(RTMIR3P)" = "y" ] || [ "$(RTMIR4A)" = "y" ] || [ "$(RTRM2100)" = "y" ] || [ "$(RTR2100)" = "y" ] || [ "$(RTE8820S)" = "y" ]; then \
 			sed -i "/CONFIG_RA_HW_NAT_IPV6/d" $(1); \
 			echo "CONFIG_RA_HW_NAT_IPV6=y" >>$(1); \
 			sed -i "/CONFIG_RAETH_8023AZ_EEE/d" $(1); \
