@@ -1,3 +1,4 @@
+# 非常感谢@lukasz1992的源码文件
 # AsusWRT zte_e8820s support for xiaomir3g breed by nanchuci
 # AsusWRT Xiaomi
 This is version of AsusWRT that works with Xiaomi Mi routers, based on MT7621 CPU.
