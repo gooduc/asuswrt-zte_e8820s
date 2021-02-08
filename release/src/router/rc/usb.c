@@ -230,7 +230,7 @@ void add_usb_host_module(void)
 #endif
 
 #if defined(RTCONFIG_USB_XHCI)
-#if defined(RTN65U) || defined(RTCONFIG_QCA) || defined(RTAC85U) || defined(RTAC85P) || defined(RTACRH26) || defined(RTMIR3G) || defined(RTMIR3P)
+#if defined(RTN65U) || defined(RTCONFIG_QCA) || defined(RTAC85U) || defined(RTAC85P) || defined(RTACRH26) || defined(RTMIR3G) || defined(RTMIR3P) || defined(RTE8820S)
 	char *u3_param = "u3intf=0";
 #endif
 #endif
@@ -1055,7 +1055,7 @@ void stop_usb(int f_force)
 #endif
 
 #if defined(RTCONFIG_USB_XHCI)
-#if defined(RTN65U) || defined(RTCONFIG_QCA) || defined(RTAC85U) || defined(RTAC85P) || defined(RTACRH26) || defined(RTMIR3G) || defined(RTMIR3P)
+#if defined(RTN65U) || defined(RTCONFIG_QCA) || defined(RTAC85U) || defined(RTAC85P) || defined(RTACRH26) || defined(RTMIR3G) || defined(RTMIR3P) || defined(RTE8820S)
 	if (disabled) {
 #if defined(RTCONFIG_SOC_IPQ8064)
 		modprobe_r("dwc3-ipq");
