@@ -48,6 +48,8 @@ static const struct model_s model_list[] = {
 	{ "RT-N11P_B1", MODEL_RTN11P_B1},
 	{ "RT-N10P_V3", MODEL_RTN11P_B1},
 	{ "RP-AC87", MODEL_RPAC87},	
+#if defined(RTE8820S)
+	{ "RT-E8820S", MODEL_RTE8820S}
 #if defined(RTMIR3G)
 	{ "RT-MIR3G", MODEL_RTMIR3G},
 #elif defined(RTMIR3P)
@@ -203,6 +205,8 @@ int get_fwver(char *buildno, char *extendno) {
  * result is cached for safe multiple use */
 int get_model(void)
 {
+#if defined(RTE8820S)
+	return MODEL_RTE8820S;
 #if defined(RTMIR3G)
 	return MODEL_RTMIR3G;
 #elif defined(RTMIR3P)
