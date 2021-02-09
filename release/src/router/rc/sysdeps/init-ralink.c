@@ -1969,6 +1969,9 @@ set_wan_tag(char *interface) {
 	snprintf(wan_dev, sizeof(wan_dev), "vlan%d", wan_vid);
 
 	switch(model) {
+#if defined(RTCONFIG_RALINK_MT7628)
+	default:
+#else
 	case MODEL_RTAC1200HP:
 	case MODEL_RTAC51U:
 	case MODEL_RTAC51UP:
@@ -1985,10 +1988,9 @@ set_wan_tag(char *interface) {
 	case MODEL_RTAC85U:
 	case MODEL_RTAC85P:
 	case MODEL_RTACRH26:
-#if defined(RTE8820S)
 	case MODEL_RTE8820S:
-#endif
 	case MODEL_RTN800HP:
+#endif
 		ifconfig(interface, IFUP, 0, 0);
 		if(wan_vid) { /* config wan port */
 			eval("vconfig", "rem", "vlan2");
@@ -2070,9 +2072,9 @@ set_wan_tag(char *interface) {
 #endif
 }
 
+#ifdef RA_SINGLE_SKU
 void reset_ra_sku(const char *location, const char *country, const char *reg_spec)
 {
-#ifdef RA_SINGLE_SKU
 	const char *try_list[] = { reg_spec, location, country, "CE", "FCC"};
 	int i;
 	for (i = 0; i < ARRAY_SIZE(try_list); i++) {
@@ -2087,8 +2089,8 @@ void reset_ra_sku(const char *location, const char *country, const char *reg_spe
 
 	cprintf("using %s SKU for %s\n", try_list[i], location);
 	gen_ra_sku(try_list[i]);
-#endif	/* RA_SINGLE_SKU */
 }
+#endif	/* RA_SINGLE_SKU */
 
 
 /*=============================================================================
