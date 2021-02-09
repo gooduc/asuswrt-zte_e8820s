@@ -409,6 +409,8 @@ define platformKernelConfig
 		echo "CONFIG_MT7603E_BLOCK_NET_IF=y" >>$(1); \
 		sed -i "/CONFIG_MT7603E_QOS_DLS_SUPPORT/d" $(1); \
 		echo "CONFIG_MT7603E_QOS_DLS_SUPPORT=y" >>$(1); \
+		sed -i "/CONFIG_LED_CONTROL_SUPPORT/d" $(1); \
+		echo "CONFIG_LED_CONTROL_SUPPORT=y" >>$(1); \		
 		sed -i "/CONFIG_MT7603E_ATE_SUPPORT/d" $(1); \
 		echo "# CONFIG_MT7603E_ATE_SUPPORT is not set" >>$(1); \
 		sed -i "/CONFIG_MT7603E_MULTI_INF_SUPPORT/d" $(1); \
