@@ -1989,6 +1989,7 @@ set_wan_tag(char *interface) {
 	case MODEL_RTAC85P:
 	case MODEL_RTACRH26:
 	case MODEL_RTN800HP:
+    case MODEL_RTE8820S:
 #endif
 		ifconfig(interface, IFUP, 0, 0);
 		if(wan_vid) { /* config wan port */
