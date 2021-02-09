@@ -50,7 +50,7 @@ void init_devs(void)
 {
 #define MKNOD(name,mode,dev)	if(mknod(name,mode,dev)) perror("## mknod " name)
 
-#if defined(LINUX30) && !defined(RTN14U) && !defined(RTAC52U) && !defined(RTAC51U) && !defined(RTN11P) && !defined(RTN300) && !defined(RTN54U) && !defined(RTAC1200HP) && !defined(RTN56UB1) && !defined(RTN56UB2) && !defined(RTAC54U) && !defined(RTAC51UP) && !defined(RTAC53) && !defined(RTAC1200GA1) && !defined(RTAC1200GU) && !defined(RTAC1200) && !defined(RTN11P_B1) && !defined(RPAC87) && !defined(RTAC85U) && !defined(RTAC85P) && !defined(RTN800HP) && !defined(RTACRH26) && !defined(RTMIR3G) && !defined(RTMIR3P) && !defined(RTMIR4A) && !defined(RTRM2100) && !defined(RTR2100) && !defined(RTE8820S)
+#if defined(LINUX30) && !defined(RTN14U) && !defined(RTAC52U) && !defined(RTAC51U) && !defined(RTN11P) && !defined(RTN300) && !defined(RTN54U) && !defined(RTAC1200HP) && !defined(RTN56UB1) && !defined(RTN56UB2) && !defined(RTAC54U) && !defined(RTAC51UP) && !defined(RTAC53) && !defined(RTAC1200GA1) && !defined(RTAC1200GU) && !defined(RTAC1200) && !defined(RTN11P_B1) && !defined(RPAC87) && !defined(RTAC85U) && !defined(RTAC85P) && !defined(RTN800HP) && !defined(RTACRH26) && !defined(RTE8820S) && !defined(RTMIR4A) && !defined(RTRM2100) && !defined(RTR2100)
 	/* Below device node are used by proprietary driver.
 	 * Thus, we cannot use GPL-only symbol to create/remove device node dynamically.
 	 */
@@ -63,13 +63,13 @@ void init_devs(void)
 	MKNOD("/dev/nvram", S_IFCHR | 0666, makedev(228, 0));
 #else
 	MKNOD("/dev/video0", S_IFCHR | 0666, makedev(81, 0));
-#if !defined(RTN14U) && !defined(RTAC52U) && !defined(RTAC51U) && !defined(RTN11P) && !defined(RTN300) && !defined(RTN54U) && !defined(RTAC1200HP) && !defined(RTN56UB1) && !defined(RTN56UB2) && !defined(RTAC54U) && !defined(RTAC1200GA1) && !defined(RTAC1200GU)  && !defined(RTAC1200) && !defined(RTN11P_B1) && !defined(RPAC87) && !defined(RTAC85U) && !defined(RTAC85P) && !defined(RTN800HP) && !defined(RTACRH26) && !defined(RTMIR3G) && !defined(RTMIR3P) && !defined(RTMIR4A) && !defined(RTRM2100) && !defined(RTR2100) && !defined(RTE8820S)
+#if !defined(RTN14U) && !defined(RTAC52U) && !defined(RTAC51U) && !defined(RTN11P) && !defined(RTN300) && !defined(RTN54U) && !defined(RTAC1200HP) && !defined(RTN56UB1) && !defined(RTN56UB2) && !defined(RTAC54U) && !defined(RTAC1200GA1) && !defined(RTAC1200GU)  && !defined(RTAC1200) && !defined(RTN11P_B1) && !defined(RPAC87) && !defined(RTAC85U) && !defined(RTAC85P) && !defined(RTN800HP) && !defined(RTACRH26) && !defined(RTE8820S) && !defined(RTMIR4A) && !defined(RTRM2100) && !defined(RTR2100)
 	MKNOD("/dev/rtkswitch", S_IFCHR | 0666, makedev(206, 0));
 #endif
 	MKNOD("/dev/spiS0", S_IFCHR | 0666, makedev(217, 0));
 	MKNOD("/dev/i2cM0", S_IFCHR | 0666, makedev(218, 0));
 #if defined(RTN14U) || defined(RTAC52U) || defined(RTAC51U) || defined(RTN11P) || defined(RTN300) || defined(RTN54U) || defined(RTAC1200HP) || defined(RTN56UB1) || defined(RTN56UB2) || defined(RTAC54U)
-#elif defined(RTAC1200) || defined(RTAC1200GA1) || defined(RTAC1200GU) || defined(RTN11P_B1) || defined(RPAC87) || defined(RTAC51UP) || defined(RTAC53) || defined(RTAC85U) || defined(RTAC85P) || defined(RTN800HP) || defined(RTACRH26) || defined(RTMIR3G) || defined(RTMIR3P) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100) || defined(RTE8820S)
+#elif defined(RTAC1200) || defined(RTAC1200GA1) || defined(RTAC1200GU) || defined(RTN11P_B1) || defined(RPAC87) || defined(RTAC51UP) || defined(RTAC53) || defined(RTAC85U) || defined(RTAC85P) || defined(RTN800HP) || defined(RTACRH26) || defined(RTE8820S) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
 	MKNOD("/dev/rdm0", S_IFCHR | 0x666, makedev(253, 0));
 #else
 	MKNOD("/dev/rdm0", S_IFCHR | 0666, makedev(254, 0));
@@ -191,7 +191,7 @@ static void init_switch_ralink(void)
 			eval("ifconfig", nvram_safe_get("wan0_ifname"), "hw", "ether", nvram_safe_get("et0macaddr"));
 	}
 #endif
-#if defined(RTN56UB1) || defined(RTN56UB2) || defined(RTAC1200GA1) || defined (RTAC1200GU) || defined (RTAC85U) || defined (RTAC85P) || defined(RTN800HP) || defined(RTACRH26) || defined(RTMIR3G) || defined(RTMIR3P) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100) || defined(RTE8820S) //workaround, let network device initialize before config_switch()
+#if defined(RTN56UB1) || defined(RTN56UB2) || defined(RTAC1200GA1) || defined (RTAC1200GU) || defined (RTAC85U) || defined (RTAC85P) || defined(RTN800HP) || defined(RTACRH26) || defined(RTE8820S) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100) //workaround, let network device initialize before config_switch()
 	eval("ifconfig", "eth2", "up");
 	sleep(1);
 #endif
@@ -377,7 +377,7 @@ void config_switch()
 		dbG("software reset\n");
 		eval("rtkswitch", "27");	// software reset
 	}
-#if defined(RTN14U) || defined(RTAC52U) || defined(RTAC51U) || defined(RTN11P) || defined(RTN300) || defined(RTN54U) || defined(RTAC1200HP) || defined(RTN56UB1) || defined(RTAC54U) || defined(RTN56UB2) || defined(RTAC51UP)  || defined(RTAC53)|| defined(RTAC1200GA1) || defined(RTAC1200GU) || defined(RTAC1200) || defined(RTN11P_B1) || defined(RTAC85U) || defined(RTAC85P) || defined(RTN800HP) || defined(RTACRH26) || defined(RTMIR3G) || defined(RTMIR3P) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100) || defined(RTE8820S)
+#if defined(RTN14U) || defined(RTAC52U) || defined(RTAC51U) || defined(RTN11P) || defined(RTN300) || defined(RTN54U) || defined(RTAC1200HP) || defined(RTN56UB1) || defined(RTAC54U) || defined(RTN56UB2) || defined(RTAC51UP)  || defined(RTAC53)|| defined(RTAC1200GA1) || defined(RTAC1200GU) || defined(RTAC1200) || defined(RTN11P_B1) || defined(RTAC85U) || defined(RTAC85P) || defined(RTN800HP) || defined(RTACRH26) || defined(RTE8820S) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
 	system("rtkswitch 8 0"); //Barton add
 #endif
 
@@ -413,11 +413,11 @@ void config_switch()
 			default:
 				break; /* Nothing to do. */
 		}
-#elif defined(RTMIR3G) || defined(RTMIR4A)
+#elif defined(RTE8820S) || defined(RTMIR4A)
 		/* P0    P1    P2    P3    P4    P6    */
-		/* NA    WAN   L2    L1    NA    GMAC1 */
+		/* L1    L2    L3    L4    WAN   GMAC1 */
 
-		/* Convert STB port value for RTMIR3G and RTMIR4A*/
+		/* Convert STB port value for RTE8820S and RTMIR4A*/
 		switch (stbport) {
 			case 1: // P1 -> P3
 				stbport = 3;
@@ -469,6 +469,20 @@ void config_switch()
 			int t, vlan_val = -1, prio_val = -1;
 			unsigned int mask = 0;
 
+#if defined(RTCONFIG_RALINK_MT7628)
+			/* Create WAN VLAN interface */
+			if (nvram_get_int("switch_wan0tagid") != 0) {
+				char wan_dev[10];
+				eval("vconfig", "rem", "vlan2");
+				eval("vconfig", "add", "eth2", nvram_safe_get("switch_wan0tagid"));
+
+				snprintf(wan_dev, sizeof(wan_dev), "vlan%d", nvram_get_int("switch_wan0tagid"));
+
+				prio_val = nvram_get_int("switch_wan1prio");
+				if (prio_val >= 0 && prio_val <= 7)
+					eval("vconfig", "set_egress_map", wan_dev, "0", nvram_get("switch_wan0prio"));
+			}
+#endif
 			switch (model) {
 #if defined(RTAC51UP) || defined(RTAC53)
 			case MODEL_RTAC51UP:
@@ -945,70 +959,6 @@ switch_exist(void)
 
 void init_wl(void)
 {
-	unsigned char buffer[16];
-	unsigned char *dst;
-	char tmpStr1[16];
-	char tmpStr2[24];
-	char tmpStr3[24];
-	int i;
-
-	memset(tmpStr1, 0, sizeof(tmpStr1));
-	memset(tmpStr2, 0, sizeof(tmpStr2));
-	memset(tmpStr3, 0, sizeof(tmpStr3));
-	dst = buffer;
-	memset(buffer, 0, sizeof(buffer));
-	memset(dst, 0, MAX_REGSPEC_LEN+1);
-	
-	if(FRead(dst, REGSPEC_ADDR, MAX_REGSPEC_LEN) < 0)
-	{
-		_dprintf("READ REGSPEC_ADDR ERROR\n");
-	}
-	else
-	{
-		for(i = 0; i < MAX_REGSPEC_LEN && dst[i] != '\0'; i++) {
-			if (dst[i] == 0xff)
-			{
-				dst[i] = '\0';
-				break;
-			}
-		}
-	}
-	sprintf(tmpStr1, "regspec=%s", dst);
-	
-	memset(dst, 0, MAX_REGDOMAIN_LEN+1);
-	if(FRead(dst, REG2G_EEPROM_ADDR, MAX_REGDOMAIN_LEN) < 0)
-	{
-		_dprintf("READ REG2G_EEPROM_ADDR ERROR\n");
-	}
-	else
-	{
-		for(i = 0; i < MAX_REGDOMAIN_LEN && dst[i] != '\0'; i++) {
-			if (dst[i] == 0xff)
-			{
-				dst[i] = '\0';
-				break;
-			}
-		}
-	}
-	sprintf(tmpStr2, "regspec_2g=%s", dst);
-
-	memset(dst, 0, MAX_REGDOMAIN_LEN+1);
-	if(FRead(dst, REG5G_EEPROM_ADDR, MAX_REGDOMAIN_LEN) < 0)
-	{
-		_dprintf("READ REG5G_EEPROM_ADDR ERROR\n");
-	}
-	else
-	{
-		for(i = 0; i < MAX_REGDOMAIN_LEN && dst[i] != '\0'; i++) {
-			if (dst[i] == 0xff)
-			{
-				dst[i] = '\0';
-				break;
-			}
-		}
-	}
-	sprintf(tmpStr3, "regspec_5g=%s", dst);
-
 #if defined (RTCONFIG_WLMODULE_RT3090_AP)
 	if (!module_loaded("RTPCI_ap"))
 	{
@@ -1047,7 +997,7 @@ void init_wl(void)
 
 #if defined (RTCONFIG_WLMODULE_MT7615E_AP)
 	if (!module_loaded("mt_wifi"))
-		modprobe("mt_wifi"/*, tmpStr1, tmpStr2, tmpStr3*/);
+		modprobe("mt_wifi");
 #endif
 	sleep(1);
 }
@@ -1308,7 +1258,7 @@ void init_syspara(void)
 #if defined(RTAC1200) || defined(RTAC53)
 	nvram_set("et0macaddr", macaddr2);
 	nvram_set("et1macaddr", macaddr);
-#elif defined(RTMIR3G) || defined(RTE8820S) || defined(RTMIR3P) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
+#elif defined(RTE8820S) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
 #else
 	//TODO: separate for different chipset solution
 	nvram_set("et0macaddr", macaddr);
@@ -1319,7 +1269,7 @@ void init_syspara(void)
 		dbg("READ MAC address GMAC0: Out of scope\n");
 	else
 	{
-#if !defined(RTMIR3G) && !defined(RTE8820S) && !defined(RTMIR3P) && !defined(RTMIR4A) && !defined(RTRM2100) && !defined(RTR2100)
+#if !defined(RTE8820S) && !defined(RTMIR4A) && !defined(RTRM2100) && !defined(RTR2100)
 		if (buffer[0]==0xff)
 		{
 			if (ether_atoe(macaddr, ea))
@@ -1335,7 +1285,7 @@ void init_syspara(void)
 		dbg("READ MAC address GMAC2: Out of scope\n");
 	else
 	{
-#if !defined(RTMIR3G) && !defined(RTE8820S) && !defined(RTMIR3P) && !defined(RTMIR4A) && !defined(RTRM2100) && !defined(RTR2100)
+#if !defined(RTE8820S) && !defined(RTMIR4A) && !defined(RTRM2100) && !defined(RTR2100)
 		if (buffer[0]==0xff)
 		{
 			if (ether_atoe(macaddr2, ea))
@@ -1397,7 +1347,7 @@ void init_syspara(void)
 #if defined(RTAC51U) || defined(RTAC51UP) || defined(RTAC53) || defined(RTN11P) 
 	reg_spec_def = "CE";
 #else
-#if defined(RTMIR3G) || defined(RTE8820S) || defined(RTMIR3P) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
+#if defined(RTE8820S) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
 	if (!nvram_match("location_code", "US"))
 		reg_spec_def = "CE";
 	else
@@ -1628,6 +1578,8 @@ void init_syspara(void)
 	_dprintf("bootloader version: %s\n", nvram_safe_get("blver"));
 	_dprintf("firmware version: %s\n", nvram_safe_get("firmver"));
 
+
+#if defined(RTE8820S) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
 	// set country from location_code
 	char *loc_code[] = {"DB", "EU", "RU", "US", "CN", 0};
 	char **curr_loc_code = loc_code;
@@ -1642,6 +1594,7 @@ void init_syspara(void)
 #endif
 			break;
 		}
+#endif
 
 #if 0
 	dst = txbf_para;
@@ -1748,7 +1701,7 @@ void generate_wl_para(int unit, int subunit)
 {
 }
 
-#if defined(RTAC52U) || defined(RTAC51U) || defined(RTN54U) || defined(RTAC1200HP) || defined(RTN56UB1) || defined(RTN56UB2)  || defined(RTAC54U) || defined(RTAC1200GA1)  || defined(RTAC1200GU) || defined(RTAC53) || defined(RTAC85U) || defined(RTN800HP) || defined(RTACRH26) || defined(RTMIR3G) || defined(RTE8820S) || defined(RTMIR3P) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
+#if defined(RTAC52U) || defined(RTAC51U) || defined(RTN54U) || defined(RTAC1200HP) || defined(RTN56UB1) || defined(RTN56UB2)  || defined(RTAC54U) || defined(RTAC1200GA1)  || defined(RTAC1200GU) || defined(RTAC53) || defined(RTAC85U) || defined(RTN800HP) || defined(RTACRH26) || defined(RTE8820S) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
 #define HW_NAT_WIFI_OFFLOADING		(0xFF00)
 #define HW_NAT_DEVNAME			"hwnat0"
 static void adjust_hwnat_wifi_offloading(void)
@@ -1808,7 +1761,7 @@ void reinit_hwnat(int unit)
 		return;
 #endif
 
-#if defined(RTMIR3G) || defined(RTE8820S) || defined(RTMIR3P) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
+#if defined(RTE8820S) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
 	if (nvram_get_int("apps_analysis") + nvram_get_int("ctf_disable") + nvram_get_int("ctf_disable_force"))
 		act = 0;
 #endif
@@ -1817,7 +1770,7 @@ void reinit_hwnat(int unit)
 	if (nvram_get_int("qos_enable") == 1)
 		act = 0;
 
-#if defined(RTN14U) || defined(RTAC52U) || defined(RTAC51U) || defined(RTN11P) || defined(RTN300) || defined(RTN54U) || defined(RTAC1200HP) || defined(RTN56UB1) || defined(RTAC54U) || defined(RTN56UB2) || defined(RTAC1200GA1)  || defined(RTAC1200GU) || defined(RTAC53) || defined(RTAC85U) || defined(RTN800HP) || defined(RTACRH26) || defined(RTMIR3G) || defined(RTE8820S) || defined(RTMIR3P) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
+#if defined(RTN14U) || defined(RTAC52U) || defined(RTAC51U) || defined(RTN11P) || defined(RTN300) || defined(RTN54U) || defined(RTAC1200HP) || defined(RTN56UB1) || defined(RTAC54U) || defined(RTN56UB2) || defined(RTAC1200GA1)  || defined(RTAC1200GU) || defined(RTAC53) || defined(RTAC85U) || defined(RTN800HP) || defined(RTACRH26) || defined(RTE8820S) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
 	if (act > 0 && !nvram_match("switch_wantag", "none") && !nvram_match("switch_wantag", ""))
 		act = 0;
 #endif
@@ -1847,7 +1800,7 @@ void reinit_hwnat(int unit)
 #endif
 	}
 
-#if defined(RTN65U) || defined(RTN56U) || defined(RTN14U) || defined(RTAC52U) || defined(RTAC51U) || defined(RTN11P) || defined(RTN300) || defined(RTN54U) || defined(RTAC1200HP) || defined(RTN56UB1) || defined(RTAC54U) || defined(RTN56UB2) || defined(RTAC1200GA1) || defined(RTAC1200GU) || defined(RTAC51UP) || defined(RTAC53) || defined(RTAC85U) || defined(RTAC85P) || defined(RTN800HP) || defined(RTACRH26) || defined(RTMIR3G) || defined(RTE8820S) || defined(RTMIR3P) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
+#if defined(RTN65U) || defined(RTN56U) || defined(RTN14U) || defined(RTAC52U) || defined(RTAC51U) || defined(RTN11P) || defined(RTN300) || defined(RTN54U) || defined(RTAC1200HP) || defined(RTN56UB1) || defined(RTAC54U) || defined(RTN56UB2) || defined(RTAC1200GA1) || defined(RTAC1200GU) || defined(RTAC51UP) || defined(RTAC53) || defined(RTAC85U) || defined(RTAC85P) || defined(RTN800HP) || defined(RTACRH26) || defined(RTE8820S) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
 	if (act > 0) {
 #if defined(RTCONFIG_DUALWAN)
 		if (unit < 0 || unit > WAN_UNIT_SECOND || nvram_match("wans_mode", "lb")) {
@@ -1969,9 +1922,6 @@ set_wan_tag(char *interface) {
 	snprintf(wan_dev, sizeof(wan_dev), "vlan%d", wan_vid);
 
 	switch(model) {
-#if defined(RTCONFIG_RALINK_MT7628)
-	default:
-#else
 	case MODEL_RTAC1200HP:
 	case MODEL_RTAC51U:
 	case MODEL_RTAC51UP:
@@ -1989,7 +1939,6 @@ set_wan_tag(char *interface) {
 	case MODEL_RTAC85P:
 	case MODEL_RTACRH26:
 	case MODEL_RTN800HP:
-#endif
 		ifconfig(interface, IFUP, 0, 0);
 		if(wan_vid) { /* config wan port */
 			eval("vconfig", "rem", "vlan2");
@@ -2100,7 +2049,7 @@ void reset_ra_sku(const char *location, const char *country, const char *reg_spe
 
 void setup_smp(void)
 {
-#if defined(RTAC1200GU) || defined(RTAC1200GA1) || defined(RPAC87) || defined(RTAC85U) || defined(RTAC85P) || defined(RTN800HP) || defined(RTACRH26) || defined(RTMIR3G) || defined(RTE8820S) || defined(RTMIR3P) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
+#if defined(RTAC1200GU) || defined(RTAC1200GA1) || defined(RPAC87) || defined(RTAC85U) || defined(RTAC85P) || defined(RTN800HP) || defined(RTACRH26) || defined(RTE8820S) || defined(RTMIR4A) || defined(RTRM2100) || defined(RTR2100)
 	eval("/sbin/smp.sh", "wifi", NULL);
 #endif
 
