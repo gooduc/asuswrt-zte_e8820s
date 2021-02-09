@@ -1969,9 +1969,6 @@ set_wan_tag(char *interface) {
 	snprintf(wan_dev, sizeof(wan_dev), "vlan%d", wan_vid);
 
 	switch(model) {
-#if defined(RTCONFIG_RALINK_MT7628)
-	default:
-#else
 	case MODEL_RTAC1200HP:
 	case MODEL_RTAC51U:
 	case MODEL_RTAC51UP:
@@ -1988,9 +1985,10 @@ set_wan_tag(char *interface) {
 	case MODEL_RTAC85U:
 	case MODEL_RTAC85P:
 	case MODEL_RTACRH26:
-	case MODEL_RTN800HP:
-    case MODEL_RTE8820S:
+#if defined(RTE8820S)
+	case MODEL_RTE8820S:
 #endif
+	case MODEL_RTN800HP:
 		ifconfig(interface, IFUP, 0, 0);
 		if(wan_vid) { /* config wan port */
 			eval("vconfig", "rem", "vlan2");
