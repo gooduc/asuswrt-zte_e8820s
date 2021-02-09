@@ -393,6 +393,8 @@ define platformKernelConfig
 		echo "CONFIG_MT7603E_RT_FIRST_CARD_EEPROM=\"flash\"" >>$(1); \
 		sed -i "/CONFIG_MT7603E_RLT_AP_SUPPORT/d" $(1); \
 		echo "CONFIG_MT7603E_RLT_AP_SUPPORT=y" >>$(1); \
+		sed -i "/CONFIG_MT7603E_RLT_AP_LED/d" $(1); \
+		echo "CONFIG_MT7603E_RLT_AP_LED=y" >>$(1); \
 		sed -i "/CONFIG_MT7603E_WDS_SUPPORT/d" $(1); \
 		echo "CONFIG_MT7603E_WDS_SUPPORT=y" >>$(1); \
 		sed -i "/CONFIG_MT7603E_MBSS_SUPPORT/d" $(1); \
@@ -528,6 +530,8 @@ define platformKernelConfig
 		echo "CONFIG_RTMP_FLASH_SUPPORT=y" >>$(1); \
 		sed -i "/CONFIG_LED_CONTROL_SUPPORT/d" $(1); \
 		echo "CONFIG_LED_CONTROL_SUPPORT=y" >>$(1); \
+		sed -i "/CONFIG_SINGLE_SKU_V2/d" $(1); \
+		echo "CONFIG_SINGLE_SKU_V2=y" >>$(1); \
 		sed -i "/CONFIG_ATE_SUPPORT/d" $(1); \
 		echo "# CONFIG_ATE_SUPPORT is not set" >>$(1); \
 		sed -i "/CONFIG_RT2860V2_AP_32B_DESC/d" $(1); \
