@@ -16,8 +16,6 @@ fi
 if [ ! -h "/opt/buildroot-gcc463" ];then
 sudo ln -s /opt/asus/tools/buildroot-gcc463 /opt/buildroot-gcc463
 fi
-cd /opt/asus/release/src/router/wget
-sudo autoreconf -vfi
 
 cd /opt/asus/release/src-ra-5010
 export PATH=/opt/brcm/hndtools-mipsel-linux/bin:$PATH
