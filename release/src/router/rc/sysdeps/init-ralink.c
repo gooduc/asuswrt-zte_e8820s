@@ -1988,7 +1988,6 @@ set_wan_tag(char *interface) {
 	case MODEL_RTAC85U:
 	case MODEL_RTAC85P:
 	case MODEL_RTACRH26:
-	case MODEL_RTE8820S:
 	case MODEL_RTN800HP:
 #endif
 		ifconfig(interface, IFUP, 0, 0);
@@ -2072,9 +2071,9 @@ set_wan_tag(char *interface) {
 #endif
 }
 
-#ifdef RA_SINGLE_SKU
 void reset_ra_sku(const char *location, const char *country, const char *reg_spec)
 {
+#ifdef RA_SINGLE_SKU
 	const char *try_list[] = { reg_spec, location, country, "CE", "FCC"};
 	int i;
 	for (i = 0; i < ARRAY_SIZE(try_list); i++) {
@@ -2089,8 +2088,8 @@ void reset_ra_sku(const char *location, const char *country, const char *reg_spe
 
 	cprintf("using %s SKU for %s\n", try_list[i], location);
 	gen_ra_sku(try_list[i]);
-}
 #endif	/* RA_SINGLE_SKU */
+}
 
 
 /*=============================================================================
