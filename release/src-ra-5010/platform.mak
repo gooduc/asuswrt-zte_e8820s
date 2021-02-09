@@ -408,7 +408,9 @@ define platformKernelConfig
 		sed -i "/CONFIG_MT7603E_BLOCK_NET_IF/d" $(1); \
 		echo "CONFIG_MT7603E_BLOCK_NET_IF=y" >>$(1); \
 		sed -i "/CONFIG_MT7603E_QOS_DLS_SUPPORT/d" $(1); \
-		echo "CONFIG_MT7603E_QOS_DLS_SUPPORT=y" >>$(1); \		
+		echo "CONFIG_MT7603E_QOS_DLS_SUPPORT=y" >>$(1); \
+		sed -i "/CONFIG_MT7603E_LED_CONTROL_SUPPORT/d" $(1); \
+		echo "CONFIG_MT7603E_LED_CONTROL_SUPPORT=y" >>$(1); \		
 		sed -i "/CONFIG_MT7603E_ATE_SUPPORT/d" $(1); \
 		echo "# CONFIG_MT7603E_ATE_SUPPORT is not set" >>$(1); \
 		sed -i "/CONFIG_MT7603E_MULTI_INF_SUPPORT/d" $(1); \
@@ -528,6 +530,8 @@ define platformKernelConfig
 		echo "CONFIG_RTMP_FLASH_SUPPORT=y" >>$(1); \
 		sed -i "/CONFIG_LED_CONTROL_SUPPORT/d" $(1); \
 		echo "CONFIG_LED_CONTROL_SUPPORT=y" >>$(1); \
+		sed -i "/CONFIG_SINGLE_SKU_V2/d" $(1); \
+		echo "CONFIG_SINGLE_SKU_V2=y" >>$(1); \
 		sed -i "/CONFIG_ATE_SUPPORT/d" $(1); \
 		echo "# CONFIG_ATE_SUPPORT is not set" >>$(1); \
 		sed -i "/CONFIG_RT2860V2_AP_32B_DESC/d" $(1); \
