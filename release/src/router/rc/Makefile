@@ -868,6 +868,16 @@ endif
 ifeq ($(RTCONFIG_DSL),y)
 	@cd $(INSTALLDIR)/sbin && ln -sf rc asustest
 endif
+ifeq ($(or $(RTCONFIG_RALINK),$(RTCONFIG_QCA)),y)
+	@cd $(INSTALLDIR)/sbin && ln -sf rc FWRITE
+	@cd $(INSTALLDIR)/sbin && ln -sf rc FREAD
+endif
+ifeq ($(RTCONFIG_RALINK),y)
+	@cd $(INSTALLDIR)/sbin && ln -sf rc asuscfe_2g
+	@cd $(INSTALLDIR)/sbin && ln -sf rc asuscfe_5g
+	@cd $(INSTALLDIR)/sbin && ln -sf rc stainfo_2g
+	@cd $(INSTALLDIR)/sbin && ln -sf rc stainfo_5g
+endif
 
 ifeq ($(or $(RTCONFIG_OPENPLUS_TFAT),$(RTCONFIG_OPENPLUSPARAGON_NTFS),$(RTCONFIG_OPENPLUSTUXERA_NTFS),$(RTCONFIG_OPENPLUSPARAGON_HFS),$(RTCONFIG_OPENPLUSTUXERA_HFS)),y)
 	@cd $(INSTALLDIR)/sbin && ln -sf rc set_fs_coexist
@@ -948,6 +958,9 @@ ifeq ($(RTCONFIG_INTERNAL_GOBI),y)
 	@cd $(INSTALLDIR)/sbin && ln -sf rc lteled
 endif
 ifeq ($(RTCONFIG_TR069),y)
+	@cd $(INSTALLDIR)/sbin && ln -sf rc dhcpc_lease
+endif
+ifeq ($(MERLINR_NAME), $(filter $(MERLINR_NAME), SBRAC3200P RTAC85P RMAC2100 RTE8820S))
 	@cd $(INSTALLDIR)/sbin && ln -sf rc dhcpc_lease
 endif
 
