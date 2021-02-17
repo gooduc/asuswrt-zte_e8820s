@@ -181,7 +181,7 @@ config RTMP_FLASH_SUPPORT
 config LED_CONTROL_SUPPORT
 	bool "LED Control Support"
 	depends on WIFI_DRIVER
-    	default y
+    	default n
 
 config SINGLE_SKU_V2
     	bool "Single SKU V2"
