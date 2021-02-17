@@ -271,7 +271,7 @@ endif
 else ifeq ($(RTCONFIG_REALTEK),y)
 OBJS += init-realtek.o wps-realtek.o realtek.o rtk_wifi_drvmib.o ate-realtek.o
 else ifeq ($(RTCONFIG_RALINK),y)
-OBJS += init-ralink.o wps-ralink.o ralink.o ate-ralink.o
+OBJS += init-ralink.o wps-ralink.o ralink.o
 ifeq ($(RTCONFIG_CONCURRENTREPEATER),y)
 OBJS += air_monitor.o
 endif
@@ -292,6 +292,19 @@ endif
 OBJS += $(if $(wildcard private.c),private.o,prebuild/private.o)
 OBJS += $(if $(wildcard conn_diag.c),conn_diag.o,prebuild/conn_diag.o)
 
+ifeq ($(K3),y)
+OBJS += $(if $(wildcard k3.c), k3.o, prebuild/k3.o)
+OBJS += $(if $(wildcard k3ex.c), k3ex.o, prebuild/k3ex.o)
+else ifeq ($(K3C),y)
+OBJS += $(if $(wildcard k3c.c), k3c.o, prebuild/k3c.o)
+else ifeq ($(R8000P),y)
+OBJS += $(if $(wildcard r7900p.c), r7900p.o, prebuild/r7900p.o)
+else
+OBJS += merlinr.o
+endif
+ifeq ($(RMAC2100),y)
+OBJS += $(if $(wildcard merlinrex.c), merlinrex.o, prebuild/merlinrex.o)
+endif
 # TODO, speedtest
 ifeq ($(RTCONFIG_SPEEDTEST),y)
 OBJS += $(if $(wildcard speedtest.c),speedtest.o,prebuild/speedtest.o)
@@ -377,9 +390,10 @@ ifeq ($(RTCONFIG_FRS_FEEDBACK),y)
 OBJS += dsl_fb.o
 endif
 ifeq ($(RTCONFIG_FRS_LIVE_UPDATE),y)
+ifneq ($(MERLINR_NAME), $(filter $(MERLINR_NAME), K3 K3C R7900P SBRAC3200P RTAC85P RMAC2100 RTE8820S))
 OBJS += frs_service.o
 endif
-
+endif
 ifeq ($(RTCONFIG_DSL),y)
 OBJS += asustest.o
 endif
@@ -984,6 +998,10 @@ endif
 
 ifeq ($(RTCONFIG_ADTBW),y)
 	@cd $(INSTALLDIR)/sbin && ln -sf rc adtbw
+endif
+
+ifeq ($(strip $(MERLINR_NAME)),$(filter $(MERLINR_NAME), SBRAC1900P SBRAC3200P RTAC68U R8000P))
+	@cd $(INSTALLDIR)/sbin && ln -sf rc toolbox
 endif
 
 clean:
