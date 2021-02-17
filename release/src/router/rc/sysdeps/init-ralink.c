@@ -158,7 +158,6 @@ void generate_switch_para(void)
 		case MODEL_RTAC85U:
 		case MODEL_RTAC85P:
 		case MODEL_RTACRH26:
-		case MODEL_RTE8820S:
 			nvram_unset("vlan3hwname");
 			if ((wans_cap && wanslan_cap) ||
 			    (wanslan_cap && (!nvram_match("switch_wantag", "none") && !nvram_match("switch_wantag", "")))
@@ -355,7 +354,6 @@ void config_switch()
 	case MODEL_RTAC85U:
 	case MODEL_RTAC85P:
 	case MODEL_RTACRH26:
-    case MODEL_RTE8820S:
 	case MODEL_RPAC87:
 	case MODEL_RTN800HP:
 		merge_wan_port_into_lan_ports = 1;
@@ -1051,7 +1049,6 @@ void init_wl(void)
 #else
 	if (!module_loaded("mt76x3_ap"))
 		modprobe("mt76x3_ap");
-#endif
 #else
 	if (!module_loaded("rlt_wifi_7603e"))
 		modprobe("rlt_wifi_7603e");
@@ -1112,7 +1109,6 @@ void fini_wl(void)
 #else
 	if (module_loaded("mt76x3_ap"))
 		modprobe_r("mt76x3_ap");
-#endif
 #else
 	if (!module_loaded("rlt_wifi_7603e"))
 		modprobe("rlt_wifi_7603e");
@@ -1282,7 +1278,7 @@ void init_syspara(void)
 	}
 #endif	/* RTAC51U FIX EU2CN */
 
-#if defined(RTAC1200HP) || defined(RTN56UB1) || defined(RTN56UB2) || defined(RTAC1200GA1) || defined(RTAC1200GU) || defined(RTAC85U) || defined(RTAC85P) || defined(RTN800HP) || defined(RTACRH26) || defined(RTE8820S)
+#if defined(RTAC1200HP) || defined(RTN56UB1) || defined(RTN56UB2) || defined(RTAC1200GA1) || defined(RTAC1200GU) || defined(RTAC85U) || defined(RTAC85P) || defined(RTN800HP) || defined(RTACRH26)
 #if defined(RTAC85U) || defined(RTAC85P) || defined(RTN800HP) || defined(RTACRH26)
 	brstp='0';
 	FRead(&brstp, OFFSET_BR_STP, 1);
@@ -2012,7 +2008,6 @@ set_wan_tag(char *interface) {
 	case MODEL_RTAC85U:
 	case MODEL_RTAC85P:
 	case MODEL_RTACRH26:
-	case MODEL_RTE8820S:
 	case MODEL_RTN800HP:
 #endif
 		ifconfig(interface, IFUP, 0, 0);
