@@ -199,7 +199,7 @@ ifeq ($(or $(RTAC68A),$(RT4GAC68U)),y)
 CFLAGS += -DRTAC68U
 endif
 
-ifeq ($(or $(RTAC85U),$(RTAC85P),$(RTACRH26)),y)
+ifeq ($(or $(RTAC85U),$(RTAC85P),$(RTACRH26),$(RMAC2100),$(RTE8820S)),y)
 TARGET_MODEL = $(subst -,,$(subst +,P,$(BUILD_NAME)))
 CFLAGS += -D$(TARGET_MODEL)
 endif
@@ -236,7 +236,7 @@ endif
 
 OBJS := rc.o init.o interface.o lan.o wireless.o wan.o pppd.o auth.o services.o
 OBJS += firewall.o ppp.o services.o common.o
-OBJS += watchdog.o ntp.o $(if $(RTCONFIG_MULTIWAN_CFG),qos_multiwan.o,qos.o) udhcpc.o
+OBJS += watchdog.o ntp.o $(if $(RTCONFIG_MULTIWAN_CFG),qos_multiwan.o,qos.o) udhcpc.o ate.o
 OBJS += format.o
 
 ifeq ($(RTCONFIG_NETOOL),y)
@@ -271,7 +271,7 @@ endif
 else ifeq ($(RTCONFIG_REALTEK),y)
 OBJS += init-realtek.o wps-realtek.o realtek.o rtk_wifi_drvmib.o ate-realtek.o
 else ifeq ($(RTCONFIG_RALINK),y)
-OBJS += init-ralink.o wps-ralink.o ralink.o
+OBJS += init-ralink.o wps-ralink.o ralink.o ate-ralink.o
 ifeq ($(RTCONFIG_CONCURRENTREPEATER),y)
 OBJS += air_monitor.o
 endif
@@ -339,6 +339,10 @@ endif
 
 ifeq ($(RTCONFIG_WTFAST),y)
 OBJS += wtfast.o
+endif
+
+ifeq ($(RTCONFIG_UUPLUGIN),y)
+OBJS += uu.o
 endif
 
 ifeq ($(or $(RTCONFIG_PPTPD),$(RTCONFIG_ACCEL_PPTPD)),y)

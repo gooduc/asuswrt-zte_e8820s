@@ -77,6 +77,20 @@
 #include <cfg_event.h>
 #endif
 
+#if defined(K3)
+#include "k3.h"
+#elif defined(R7900P) || defined(R8000P)
+#include "r7900p.h"
+#elif defined(K3C)
+#include "k3c.h"
+#elif defined(SBRAC1900P)
+#include "ac1900p.h"
+#elif defined(SBRAC3200P)
+#include "ac3200p.h"
+#else
+#include "merlinr.h"
+#endif
+
 #define BCM47XX_SOFTWARE_RESET	0x40		/* GPIO 6 */
 #define RESET_WAIT		2		/* seconds */
 #define RESET_WAIT_COUNT	RESET_WAIT * 10 /* 10 times a second */
@@ -5245,6 +5259,57 @@ void dnsmasq_check()
 	}
 }
 
+#if defined(RTCONFIG_SOFTCENTER)
+static void softcenter_sig_check()
+{
+	//1=wan,2=nat,3=mount
+	if(nvram_match("sc_installed", "1")){
+		if(nvram_match("sc_wan_sig", "1")) {
+			if(nvram_match("sc_mount", "1")) {
+				if(f_exists("/jffs/softcenter/bin/softcenter.sh")) {
+					softcenter_eval(SOFTCENTER_WAN);
+					nvram_set_int("sc_wan_sig", 0);
+				}
+			} else {
+				softcenter_eval(SOFTCENTER_WAN);
+				nvram_set_int("sc_wan_sig", 0);
+			}
+		}
+		if(nvram_match("sc_nat_sig", "1")) {
+			if(nvram_match("sc_mount", "1")) {
+				if(f_exists("/jffs/softcenter/bin/softcenter.sh")) {
+					softcenter_eval(SOFTCENTER_NAT);
+					nvram_set_int("sc_nat_sig", 0);
+				}
+			} else {
+				softcenter_eval(SOFTCENTER_NAT);
+				nvram_set_int("sc_nat_sig", 0);
+			}
+		}
+		if(nvram_match("sc_mount_sig", "1")) {
+			if(f_exists("/jffs/softcenter/bin/softcenter.sh")) {
+				softcenter_eval(SOFTCENTER_MOUNT);
+				nvram_set_int("sc_mount_sig", 0);
+			} else if(!f_exists("/jffs/softcenter/bin/softcenter.sh") && nvram_match("sc_mount", "1")) {
+				//remount to sdb sdc not sda
+				doSystem("sh /jffs/softcenter/automount.sh &");
+			}
+		}
+		if(nvram_match("sc_services_sig", "1")) {
+			if(f_exists("/jffs/softcenter/bin/softcenter.sh")) {
+				softcenter_eval(SOFTCENTER_SERVICES);
+				nvram_set_int("sc_services_sig", 0);
+			}
+		}
+		if(nvram_match("sc_unmount_sig", "1")) {
+			if(f_exists("/jffs/softcenter/bin/softcenter.sh")) {
+				softcenter_eval(SOFTCENTER_UNMOUNT);
+				nvram_set_int("sc_unmount_sig", 0);
+			}
+		}
+	}
+}
+#endif
 #ifdef RTCONFIG_NEW_USER_LOW_RSSI
 void roamast_check()
 {
@@ -6782,6 +6847,8 @@ void watchdog(int sig)
 #endif
 	/* handle button */
 	btn_check();
+	/* handle led */
+	led_on_off();
 
 	if (nvram_match("asus_mfg", "0")
 #if defined(RTCONFIG_LED_BTN) || defined(RTCONFIG_WPS_ALLLED_BTN)
@@ -6999,7 +7066,9 @@ void watchdog(int sig)
 	bs_pre = bs;
 #endif
 #endif
-
+#if defined(RTCONFIG_SOFTCENTER)
+	softcenter_sig_check();
+#endif
 	if (watchdog_period)
 		return;
 
