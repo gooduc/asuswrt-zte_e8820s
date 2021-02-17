@@ -1785,6 +1785,10 @@ config RTCONFIG_FRS_LIVE_UPDATE
 	bool "RTCONFIG_FRS_LIVE_UPDATE support"
 	default n
 
+config RTCONFIG_SOFTCENTER
+	bool "softcenter"
+	default n
+
 config RTCONFIG_ASD
 	bool "RTCONFIG_ASD support"
 	default n
