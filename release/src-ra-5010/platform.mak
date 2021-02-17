@@ -384,7 +384,7 @@ define platformKernelConfig
 		sed -i "/CONFIG_WIFI_MT7603E/d" $(1); \
 		echo "CONFIG_WIFI_MT7603E=m" >>$(1); \
 		sed -i "/CONFIG_MT7603E_LED_CONTROL_SUPPORT/d" $(1); \
-		echo "CONFIG_MT7603E_LED_CONTROL_SUPPORT=y" >>$(1); \		
+		echo "CONFIG_MT7603E_LED_CONTROL_SUPPORT=y" >>$(1); \
 		sed -i "/CONFIG_UAPSD/d" $(1); \
 		echo "CONFIG_UAPSD=y" >>$(1); \
 		sed -i "/CONFIG_MT_MAC/d" $(1); \
