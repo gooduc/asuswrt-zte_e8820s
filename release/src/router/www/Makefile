@@ -359,6 +359,7 @@ endif
 ifeq ($(RTCONFIG_OPENVPN), y)
 	cd $(INSTALLDIR)/www && ln -sf ../etc/openvpn/server1/client.ovpn && cd $(TOP)/www
 else
+	rm -rf $(INSTALLDIR)/www/merlin.js
 	rm -rf $(INSTALLDIR)/www/ajax_openvpn_server.asp
 	rm -rf $(INSTALLDIR)/www/Advanced_VPN_OpenVPN.asp
 ifneq ($(RTCONFIG_ACCEL_PPTPD), y)

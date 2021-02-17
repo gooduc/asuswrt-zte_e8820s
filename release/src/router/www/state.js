@@ -398,7 +398,12 @@ var wl_info = {
 
 function uiSupport(_ptn){
 	var ui_support = [<% get_ui_support(); %>][0];
-
+	if(_ptn == "uu_accel"){
+		if(rc_support.search("uu_accel") != -1)
+			return true;
+		else if ('<% nvram_get("uu_enable"); %>' == 0)
+			return false;
+	}
 	if(ui_support[_ptn])
 		return ui_support[_ptn];
 	else
@@ -482,7 +487,7 @@ function isSupport(_ptn){
 		if(!bwdpi_support) return false;
 
 		if(( based_modelid == "BRT-AC828" || based_modelid == "GT-AC5300" || based_modelid == "GT-AC9600" || based_modelid == "RT-AC5300" || based_modelid == "RT-AC3200" || based_modelid == "RT-AC3100" || 
-			based_modelid == "RT-AC88U" || based_modelid == "RT-AC87U" || based_modelid == "RT-AC86U" || based_modelid == "AC2900" || based_modelid == "RT-AC85U" || based_modelid == "RT-MIR3G" || based_modelid == "RT-MIR3P" || based_modelid == "RT-MIR4A" || based_modelid == "RT-RM2100" || based_modelid == "RT-R2100" ||
+			based_modelid == "RT-AC88U" || based_modelid == "RT-AC87U" || based_modelid == "RT-AC86U" || based_modelid == "AC2900" || based_modelid == "RT-AC85U" || based_modelid == "RT-MIR3G" || based_modelid == "RT-E8820S" || based_modelid == "RT-MIR3P" || based_modelid == "RT-MIR4A" || based_modelid == "RT-RM2100" || based_modelid == "RT-R2100" ||
 			based_modelid == "RT-AC65U" || based_modelid == "RT-AC85P" || based_modelid == "4G-AC68U" || based_modelid == "DSL-AC68U" || based_modelid == "RT-AC68U" || based_modelid == "RT-AC68R" || 
 			based_modelid == "RT-AC68W" || based_modelid == "RT-AC68RW" || based_modelid == "RT-AC1900P" || 
 			based_modelid == "RT-AC67U" || based_modelid == "RT-AC56U" || based_modelid == "RT-AC56R" || based_modelid == "BLUECAVE")
