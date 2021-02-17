@@ -2933,7 +2933,7 @@ ipset-clean:
 	-@$(MAKE) -C ipset clean
 	-@$(MAKE) -C ipset modules_clean
 	-@rm -rf ipset/Makefile ipset/stamp-h1
-
+endif
 
 miniupnpd/config.h: shared/version.h
 	cd miniupnpd && ./genconfig.sh --vendorcfg --leasefile
