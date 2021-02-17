@@ -1,12 +1,9 @@
 ccflags-y = -Idrivers/net/wireless/ralink/mt76x3/include \
 		-Idrivers/net/wireless/ralink/mt76x3/ate/include
-#EXTRA_CFLAGS = -Idrivers/net/wireless/ralink/mt76x3/include \
-		-Idrivers/net/wireless/ralink/mt76x3/ate/include
 
-WIFI_HEAD_GEN  = $(shell make -C drivers/net/wireless/rlt_wifi RT28xx_MODE=AP CHIPSET=mt7603e EE_TYPE=$(CONFIG_MT7603E_PA_LNA) sdk_build_tools >/dev/null)
-
-DRV_NAME = rlt_wifi_7603e
+DRV_NAME = mt76x3_ap
 RT_WIFI_DIR = ../mt76x3
+
 
 ########################################################
 # Common files
@@ -786,7 +783,7 @@ EXTRA_CFLAGS += -DCONFIG_BA_REORDER_MONITOR
 ifeq ($(CONFIG_SECOND_IF_MT7615E),y)
 EXTRA_CFLAGS += -DUSE_BMC
 else
-ccflags-y += -DRTMP_WLAN_HOOK_SUPPORT -DUSE_BMC
+ccflags-y += -DUSE_BMC
 endif
 EXTRA_CFLAGS += -DMT_PS -DDMA_RESET_SUPPORT -DTXRXCR_DEBUG_SUPPORT
 EXTRA_CFLAGS += -DMT7603_E1
@@ -1030,5 +1027,5 @@ endif
 
 MODULE_FLAGS=$(EXTRA_CFLAGS)
 export MODULE_FLAGS
-obj-m+=$(RT_WIFI_DIR)/tools/plug_in/
+#obj-m+=$(RT_WIFI_DIR)/tools/plug_in/
 
