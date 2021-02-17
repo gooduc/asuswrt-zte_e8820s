@@ -1143,7 +1143,11 @@ void start_dnsmasq(void)
 					    nvram_safe_get("lan_hostname"));
 			}
 		}
-
+#endif
+#if defined(RTCONFIG_SOFTCENTER)
+//anti dns hijacking
+		fprintf(fp, "121.40.153.145 wufan.softcenter.site\n");
+		fprintf(fp, "123.56.45.194 sc.softcenter.site\n");
 #endif
 		fclose(fp);
 	} else
@@ -1229,6 +1233,9 @@ void start_dnsmasq(void)
 	fprintf(fp, "pid-file=/var/run/dnsmasq.pid\n"
 		    "user=nobody\n"
 		    "bind-dynamic\n"		// listen only on interface & lo
+#if defined(RTCONFIG_SOFTCENTER)
+		    "conf-dir=/tmp/etc/dnsmasq.user\n"
+#endif
 		);
 
 #if defined(RTCONFIG_REDIRECT_DNAME)
@@ -1598,13 +1605,27 @@ void start_dnsmasq(void)
 	if (nvram_match("dhcp_static_x","1")) {
 		write_static_leases(fp);
 	}
+#if defined(RTAC3200) || defined(RTAC85P) || defined(RMAC2100) || defined(RTE8820S)
+	if (!repeater_mode()) {
+		fprintf(fp, "dhcp-script=/sbin/dhcpc_lease\n");
+		fprintf(fp, "script-arp\n");
+	}
+#endif
+	append_custom_config("dnsmasq.conf", fp);
+	/* close fp move to the last */
 	fclose(fp);
-
+	use_custom_config("dnsmasq.conf", "/etc/dnsmasq.conf");
+	run_postconf("dnsmasq", "/etc/dnsmasq.conf");
+	chmod("/etc/dnsmasq.conf", 0644);
 	/* Create resolv.conf with empty nameserver list */
 	f_write(dmresolv, NULL, 0, FW_APPEND, 0666);
 	/* Create resolv.dnsmasq with empty server list */
 	f_write(dmservers, NULL, 0, FW_APPEND, 0666);
-
+	f_write("/tmp/resolv.dnsmasq", NULL, 0, FW_APPEND, 0666);
+#else
+	/* Create resolv.dnsmasq with empty server list */
+	f_write(dmservers, NULL, 0, FW_APPEND, 0666);
+#endif
 #if (defined(RTCONFIG_TR069) && !defined(RTCONFIG_TR181))
 	eval("dnsmasq", "--log-async", "-6", "/sbin/dhcpc_lease");
 #else
@@ -1633,6 +1654,13 @@ void reload_dnsmasq(void)
 	/* notify dnsmasq */
 	kill_pidfile_s("/var/run/dnsmasq.pid", SIGHUP);
 }
+#if defined(RTCONFIG_SOFTCENTER)
+	if(nvram_get("sc_dhcp_script"))
+		doSystem("/jffs/softcenter/scripts/%s",nvram_get("sc_dhcp_script"));
+#endif
+	return 0;
+}
+#endif
 
 #ifdef RTCONFIG_IPV6
 void add_ip6_lanaddr(void)
@@ -3088,7 +3116,12 @@ start_ddns(void)
 		service = "dyndns", asus_ddns=3;
 	else if (strcmp(server, "WWW.ORAY.COM")==0) {
 		service = "peanuthull", asus_ddns = 2;
-	} else {
+	} 
+	else if (strcmp(server, "WWW.3322.ORG")==0)
+		service = "qdns dynamic";
+    else if (strcmp(server, "CUSTOM")==0)
+                service = "";
+	else {
 		logmessage("start_ddns", "Error ddns server name: %s\n", server);
 		return 0;
 	}
@@ -4065,6 +4098,35 @@ stop_telnetd(void)
 	if (pids("telnetd"))
 		killall_tk("telnetd");
 }
+
+#ifdef RTCONFIG_SOFTCENTER
+void
+start_skipd(void)
+{
+	char *skipd_argv[] = { "skipd", NULL };
+	pid_t pid;
+	if (getpid() != 1) {
+		notify_rc("start_skipd");
+		return;
+	}
+	if (pids("skipd"))
+		killall_tk("skipd");
+	logmessage(LOGNAME, "start skipd");
+	_eval(skipd_argv, NULL, 0, &pid);
+
+}
+
+void
+stop_skipd(void)
+{
+	if (getpid() != 1) {
+		notify_rc("stop_skipd");
+		return;
+	}
+	if (pids("skipd"))
+		killall_tk("skipd");
+}
+#endif
 
 void
 start_httpd(void)
@@ -7316,8 +7378,8 @@ stop_netool(void)
 int
 start_services(void)
 {
-#ifdef RTCONFIG_ASD
-	start_asd();
+#ifdef RTCONFIG_SOFTCENTER
+	start_skipd();
 #endif
 #ifdef RTCONFIG_LANTIQ
 	start_wave_monitor();
@@ -7627,6 +7689,10 @@ stop_logger(void)
 void
 stop_services(void)
 {
+	run_custom_script("services-stop", 0, NULL, NULL);
+#ifdef RTCONFIG_SOFTCENTER
+	stop_skipd();
+#endif
 #ifdef RTCONFIG_ADTBW
 	stop_adtbw();
 #endif
@@ -9178,6 +9244,13 @@ again:
 		}
 	}
 	else if(strcmp(script, "upgrade") == 0) {
+//we must make sure that usb can umount and do not start skipd again
+//don't delete scripts in init.d
+#if defined(RTCONFIG_SOFTCENTER)
+//#if defined(RTCONFIG_LANTIQ) || defined(RTCONFIG_BCMARM) || defined(RTCONFIG_QCA) || defined(RTCONFIG_RALINK)
+//		doSystem("/usr/sbin/plugin.sh stop");
+//#endif
+#endif
 		if(action&RC_SERVICE_STOP) {
 			g_upgrade = 1;
 #ifdef RTCONFIG_WIRELESSREPEATER
@@ -10756,6 +10829,20 @@ check_ddr_done:
 		killall("wtfslhd", SIGHUP);
 	}
 #endif
+#ifdef RTCONFIG_TCPLUGIN
+	else if (strcmp(script, "qmacc") == 0)
+	{
+		if(action & RC_SERVICE_STOP) stop_qmacc();
+		if(action & RC_SERVICE_START) start_qmacc();
+	}
+#endif
+#ifdef RTCONFIG_UUPLUGIN
+	else if (strcmp(script, "uuacc") == 0)
+	{
+		if(action & RC_SERVICE_STOP) stop_uu();
+		if(action & RC_SERVICE_START) start_uu();
+	}
+#endif
 #if defined(RTCONFIG_USB) && defined(RTCONFIG_USB_PRINTER)
 	else if (strcmp(script, "lpd") == 0)
 	{
@@ -11369,6 +11456,13 @@ check_ddr_done:
 		if(action & RC_SERVICE_STOP) stop_dnsmasq();
 		if(action & RC_SERVICE_START) start_dnsmasq();
 	}
+#ifdef RTCONFIG_SOFTCENTER
+	else if (strcmp(script, "skipd") == 0)
+	{
+		if(action & RC_SERVICE_STOP) stop_skipd();
+		if(action & RC_SERVICE_START) start_skipd();
+	}
+#endif
 #ifdef RTCONFIG_DHCP_OVERRIDE
 	else if (strcmp(script, "dhcpd") == 0)
 	{

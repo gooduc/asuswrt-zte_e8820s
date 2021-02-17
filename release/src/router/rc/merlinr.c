@@ -33,7 +33,6 @@
 #include <lantiq.h>
 #endif
 #include "merlinr.h"
-#include <curl/curl.h>
 #include <auth_common.h>
 
 void merlinr_insmod(){

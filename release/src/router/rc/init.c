@@ -71,6 +71,19 @@
 
 #define SHELL "/bin/sh"
 #define LOGIN "/bin/login"
+#if defined(K3)
+#include "k3.h"
+#elif defined(K3C)
+#include "k3c.h"
+#elif defined(SBRAC1900P)
+#include "ac1900p.h"
+#elif defined(SBRAC3200P)
+#include "ac3200p.h"
+#elif defined(R8000P)
+#include "r7900p.h"
+#else
+#include "merlinr.h"
+#endif
 
 static int fatalsigs[] = {
 	SIGILL,
@@ -3937,6 +3950,7 @@ int init_nvram(void)
 
 #if defined(RTAC85P) 
 	case MODEL_RTAC85P:
+		merlinr_init();
 		nvram_set("boardflags", "0x100"); // although it is not used in ralink driver, set for vlan
 		nvram_set("vlan1hwname", "et0");  // vlan. used to get "%smacaddr" for compare and find parent interface.
 		nvram_set("vlan2hwname", "et0");  // vlan. used to get "%smacaddr" for compare and find parent interface.
@@ -10153,6 +10167,7 @@ static void sysinit(void)
 		"/tmp/etc/rc.d",
 #endif
 		"/tmp/var/tmp",
+		"/tmp/etc/dnsmasq.user",	// ssr and adbyby
 		NULL
 	};
 	umask(0);
@@ -11299,6 +11314,22 @@ dbg("boot/continue fail= %d/%d\n", nvram_get_int("Ate_boot_fail"),nvram_get_int(
 #ifndef RTCONFIG_LANTIQ
 			nvram_set("success_start_service", "1");
 			force_free_caches();
+#endif
+
+#if defined(K3)
+			k3_init_done();
+#elif defined(K3C)
+			k3c_init_done();
+#elif defined(SBRAC1900P)
+			ac1900p_init_done();
+#elif defined(SBRAC3200P)
+			ac3200p_init_done();
+#elif defined(R8000P) || defined(R7900P)
+			r8000p_init_done();
+#elif defined(RTAC68U) && !defined(SBRAC1900P)
+			ac68u_init_done();
+#else
+			merlinr_init_done();
 #endif
 
 #ifdef RTCONFIG_AMAS
