@@ -120,6 +120,15 @@ define(function(){
 					{url: "NULL", tabName: "__INHERIT__"}
 				] 
 			},
+			{
+				menuName: "<#Softcenter_tool#>",
+				index: "menu_Tools",
+				tab: [
+					{url: "Tools_Sysinfo.asp", tabName: "Sysinfo"},
+					{url: "Softcenter.asp", tabName: "<#Softcenter_tool#>"},
+					{url: "NULL", tabName: "__INHERIT__"}
+				] 
+			},
 			/* ============================================================================================================ */
 			{
 				menuName: "<#menu5#>",
@@ -248,6 +257,22 @@ define(function(){
 					{url: "Advanced_Smart_Connect.asp", tabName: "<#smart_connect_rule#>"},
 					{url: "NULL", tabName: "__INHERIT__"}
 				]
+			},
+			{
+				menuName: "<#Softcenter#>",
+				index: "menu_Split",
+				tab: [
+					{url: "NULL", tabName: "__HIDE__"}
+				]
+			},
+			{
+				menuName: "<#Softcenter#>",
+				index: "menu_Softcenter",
+				tab: [
+					{url: "Main_Soft_center.asp", tabName: "<#Softcenter#>"},
+					{url: "Main_Soft_setting.asp", tabName: "Offline Mode"},
+					{url: "NULL", tabName: "__INHERIT__"}
+				]
 			}
 		],
 
@@ -364,6 +389,9 @@ define(function(){
 					if(!concurrep_support){
 						retArray.push("menu_Wireless");
 					}
+				}
+				else if (<% nvram_get("sc_installed"); %> == "0"){
+					retArray.push("menu_Softcenter");
 				}
 
 				return retArray;
