@@ -2620,7 +2620,6 @@ define RouterOptions
 	sed -i "/RTCONFIG_SOFTCENTER/d" $(1); \
 	echo "RTCONFIG_SOFTCENTER=y" >>$(1); \
 	fi; \
-	fi; \
 	)
 	$(call platformRouterOptions, $(1))
 endef
