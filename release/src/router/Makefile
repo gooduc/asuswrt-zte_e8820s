@@ -90,6 +90,10 @@ MODEL = $(subst -,,$(subst +,P,$(BUILD_NAME)))
 endif
 export CFLAGS += -D$(MODEL)
 export $(MODEL)=y
+export CFLAGS += -D$(MERLINR_NAME)
+export $(MERLINR_NAME)=y
+export CFLAGS += -DMERLINR_VER_MAJOR_$(MERLINR_VER_MAJOR)
+export MERLINR_VER_MAJOR_$(MERLINR_VER_MAJOR)=y
 
 export OLD_SRC=$(SRCBASE)/../src
 ifeq ($(RTCONFIG_REALTEK),y)
@@ -2330,6 +2334,100 @@ endif
 bonnie-clean:
 	[ ! -f bonnie/Makefile ] || $(MAKE) -C bonnie clean
 	@rm -f bonnie/Makefile
+libnfnetlink-1.0.1: libnfnetlink-1.0.1/Makefile
+	$(MAKE) -C libnfnetlink-1.0.1
+
+libnfnetlink-1.0.1/Makefile:
+	$(MAKE) libnfnetlink-1.0.1-configure
+
+libnfnetlink-1.0.1-configure:
+	( cd libnfnetlink-1.0.1 && autoreconf -i -f ; \
+		$(CONFIGURE) \
+		--prefix=/usr \
+		--bindir=/usr/sbin \
+		--libdir=/usr/lib \
+	)
+
+libnfnetlink-1.0.1-install:
+	install -D libnfnetlink-1.0.1/src/.libs/libnfnetlink.so $(INSTALLDIR)/libnfnetlink-1.0.1/usr/lib/libnfnetlink.so.0
+	$(STRIP) $(INSTALLDIR)/libnfnetlink-1.0.1/usr/lib/libnfnetlink.so.0
+
+libnfnetlink-1.0.1-clean:
+	-@$(MAKE) -C  libnfnetlink-1.0.1 clean
+
+libmnl-1.0.4: libmnl-1.0.4/Makefile
+	$(MAKE) -C libmnl-1.0.4
+
+libmnl-1.0.4/Makefile:
+	(cd libmnl-1.0.4 && autoreconf -i -f)
+	$(MAKE) libmnl-1.0.4-configure
+
+libmnl-1.0.4-configure:
+	( cd libmnl-1.0.4 ; \
+		$(CONFIGURE) \
+		--prefix=/usr \
+		--bindir=/usr/sbin \
+		--libdir=/usr/lib \
+	)
+
+libmnl-1.0.4-install:
+	install -D libmnl-1.0.4/src/.libs/libmnl.so $(INSTALLDIR)/libmnl-1.0.4/usr/lib/libmnl.so.0
+	$(STRIP) $(INSTALLDIR)/libmnl-1.0.4/usr/lib/libmnl.so.0
+
+libmnl-1.0.4-clean:
+	-@$(MAKE) -C libmnl-1.0.4 clean
+
+libnetfilter_conntrack-1.0.7: libnfnetlink-1.0.1 libmnl-1.0.4 libnetfilter_conntrack-1.0.7/Makefile
+	$(MAKE) -C libnetfilter_conntrack-1.0.7
+
+libnetfilter_conntrack-1.0.7/Makefile:
+	(cd libnetfilter_conntrack-1.0.7 && autoreconf -i -f)
+	$(MAKE) libnetfilter_conntrack-1.0.7-configure
+
+libnetfilter_conntrack-1.0.7-configure:
+	( cd libnetfilter_conntrack-1.0.7 ; \
+		LIBNFNETLINK_CFLAGS="-L$(TOP)/libnfnetlink-1.0.1/src/.libs" \
+		LIBNFNETLINK_LIBS="-lnfnetlink" \
+		LIBMNL_CFLAGS="-L$(TOP)/libmnl-1.0.4/src/.libs" \
+		LIBMNL_LIBS="-lmnl" \
+		CFLAGS="$(CFLAGS) -I$(TOP)/libnfnetlink-1.0.1/include/ -I$(TOP)/libmnl-1.0.4/include -L$(TOP)/libnfnetlink-1.0.1/src/.libs -lnfnetlink -L$(TOP)/libmnl-1.0.4/src/.libs -lmnl" \
+		$(CONFIGURE) \
+		--prefix=/usr \
+		--bindir=/usr/sbin \
+		--libdir=/usr/lib \
+	)
+
+libnetfilter_conntrack-1.0.7-install:
+	install -D libnetfilter_conntrack-1.0.7/src/.libs/libnetfilter_conntrack.so $(INSTALLDIR)/libnetfilter_conntrack-1.0.7/usr/lib/libnetfilter_conntrack.so.3
+	$(STRIP) $(INSTALLDIR)/libnetfilter_conntrack-1.0.7/usr/lib/libnetfilter_conntrack.so.3
+
+libnetfilter_conntrack-1.0.7-clean:
+	-@$(MAKE) -C libnetfilter_conntrack-1.0.7 clean
+
+libnetfilter_cttimeout-1.0.0: libnetfilter_cttimeout-1.0.0/Makefile
+	$(MAKE) -C libnetfilter_cttimeout-1.0.0
+
+libnetfilter_cttimeout-1.0.0/Makefile:
+	(cd libnetfilter_cttimeout-1.0.0 && autoreconf -i -f)
+	$(MAKE) libnetfilter_cttimeout-1.0.0-configure
+
+libnetfilter_cttimeout-1.0.0-configure:
+	( cd libnetfilter_cttimeout-1.0.0 ; \
+		LIBMNL_CFLAGS="-L$(TOP)/libmnl-1.0.4/src/.libs" \
+		LIBMNL_LIBS="-lmnl" \
+		CFLAGS="$(CFLAGS) -I$(TOP)/libmnl-1.0.4/include -L$(TOP)/libmnl-1.0.4/src/.libs -lmnl" \
+		$(CONFIGURE) \
+		--prefix=/usr \
+		--bindir=/usr/sbin \
+		--libdir=/usr/lib \
+	)
+
+libnetfilter_cttimeout-1.0.0-install:
+	install -D libnetfilter_cttimeout-1.0.0/src/.libs/libnetfilter_cttimeout.so $(INSTALLDIR)/libnetfilter_cttimeout-1.0.0/usr/lib/libnetfilter_cttimeout.so.1
+	$(STRIP) $(INSTALLDIR)/libnetfilter_cttimeout-1.0.0/usr/lib/libnetfilter_cttimeout.so.1
+
+libnetfilter_cttimeout-1.0.0-clean:
+	-@$(MAKE) -C libnetfilter_cttimeout-1.0.0 clean
 
 stress-1.x: stress-1.x/Makefile
 	$(MAKE) -C stress-1.x
@@ -2933,6 +3031,46 @@ ipset-clean:
 	-@$(MAKE) -C ipset clean
 	-@$(MAKE) -C ipset modules_clean
 	-@rm -rf ipset/Makefile ipset/stamp-h1
+
+mbedtls-2.6.0/stamp-h1:
+	cd mbedtls-2.6.0 && cmake -DCMAKE_INSTALL_PREFIX=/usr \
+	-DUSE_SHARED_MBEDTLS_LIBRARY=ON \
+	-DENABLE_TESTING=OFF \
+	-DENABLE_PROGRAMS=ON
+
+mbedtls-2.6.0: mbedtls-2.6.0/stamp-h1
+	$(MAKE) -C $@
+
+mbedtls-2.6.0-clean:
+	[ ! -f mbedtls-2.16.3/Makefile ] || $(MAKE) -C mbedtls-2.16.3 -f Makefile clean
+
+mbedtls-2.6.0-install: mbedtls-2.6.0
+	install -D mbedtls-2.6.0/library/libmbedtls.so.2.6.0 $(INSTALLDIR)/mbedtls-2.6.0/usr/lib/libmbedtls.so.2.6.0
+	install -D mbedtls-2.6.0/library/libmbedcrypto.so.2.6.0 $(INSTALLDIR)/mbedtls-2.6.0/usr/lib/libmbedcrypto.so.2.6.0
+	install -D mbedtls-2.6.0/library/libmbedx509.so.2.6.0 $(INSTALLDIR)/mbedtls-2.6.0/usr/lib/libmbedx509.so.2.6.0
+	$(STRIP) $(INSTALLDIR)/mbedtls-2.6.0/usr/lib/libmbedtls.so.2.6.0
+	$(STRIP) $(INSTALLDIR)/mbedtls-2.6.0/usr/lib/libmbedcrypto.so.2.6.0
+	$(STRIP) $(INSTALLDIR)/mbedtls-2.6.0/usr/lib/libmbedx509.so.2.6.0
+	cd $(INSTALLDIR)/mbedtls-2.6.0/usr/lib && ln -sf libmbedtls.so.2.6.0 libmbedtls.so.10 && \
+		ln -sf libmbedtls.so.2.6.0 libmbedtls.so && ln -sf libmbedcrypto.so.2.6.0 libmbedcrypto.so.0 && \
+		ln -sf libmbedcrypto.so.2.6.0 libmbedcrypto.so && ln -sf libmbedx509.so.2.6.0 libmbedx509.so.0 && \
+		ln -sf libmbedx509.so.2.6.0 libmbedx509.so
+
+httpdb/Makefile: mbedtls-2.6.0
+	cd httpdb && cmake -DCMAKE_INSTALL_PREFIX=/usr \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DMBEDTLS="$(TOP)/mbedtls-2.6.0/"
+
+httpdb: httpdb/Makefile
+	$(MAKE) -C $@
+
+httpdb-clean:
+	[ ! -f httpdb/Makefile ] || $(MAKE) -C httpdb -f Makefile clean
+	@rm -f httpdb/Makefile
+
+httpdb-install: httpdb
+	install -D httpdb/bin/httpdb $(INSTALLDIR)/httpdb/usr/sbin/httpdb
+	$(STRIP) $(INSTALLDIR)/httpdb/usr/sbin/httpdb
 endif
 
 miniupnpd/config.h: shared/version.h
@@ -3827,9 +3965,9 @@ libpcap: libpcap/stamp-h1
 
 libpcap-install: libpcap
 	@echo "do nothing"
-	#install -D libpcap/libpcap.so.1.4.0 $(INSTALLDIR)/libpcap/usr/lib/libpcap.so.1.4.0
-	#$(STRIP) $(INSTALLDIR)/libpcap/usr/lib/libpcap.so.1.4.0
-	#cd $(INSTALLDIR)/libpcap/usr/lib && ln -sf libpcap.so.1.4.0 libpcap.so
+	install -D libpcap/libpcap.so.1.5.3 $(INSTALLDIR)/libpcap/usr/lib/libpcap.so.1.5.3
+	$(STRIP) $(INSTALLDIR)/libpcap/usr/lib/libpcap.so.1.5.3
+	cd $(INSTALLDIR)/libpcap/usr/lib && ln -sf libpcap.so.1.5.3 libpcap.so
 
 libpcap-clean:
 	[ ! -f libpcap/Makefile ] || $(MAKE) -C libpcap clean
