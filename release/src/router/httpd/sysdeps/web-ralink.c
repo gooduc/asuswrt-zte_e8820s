@@ -450,60 +450,6 @@ _fn_(_st_ HTSetting)							\
 									\
 	return (MCSMappingRateTable[rate_index] * 5)/10;		\
 }
-#else
-#define FN_GETRATE(_fn_, _st_)							\
-_fn_(_st_ HTSetting)								\
-{										\
-	int rate_count = sizeof(MCSMappingRateTable)/sizeof(int);		\
-	int rate_index = 0;							\
-	unsigned char Antenna = 0;						\
-										\
-	if (HTSetting.field.MODE >= MODE_VHT)					\
-	{									\
-		unsigned char MCS = HTSetting.field.MCS;			\
-		MCS = HTSetting.field.MCS & 0xf;				\
-		Antenna = (HTSetting.field.MCS >> 4) + 1;			\
-		if (HTSetting.field.BW == BW_20) {				\
-			rate_index = 112 + ((Antenna - 1) * 10) +		\
-			((unsigned char)HTSetting.field.ShortGI * 160) +	\
-			((unsigned char)MCS);					\
-		}								\
-		else if (HTSetting.field.BW == BW_40) {				\
-			rate_index = 152 + ((Antenna - 1) * 10) +		\
-			((unsigned char)HTSetting.field.ShortGI * 160) +	\
-			((unsigned char)MCS);					\
-		}								\
-		else if (HTSetting.field.BW == BW_80) {				\
-			rate_index = 192 + ((Antenna - 1) * 10) +		\
-			((unsigned char)HTSetting.field.ShortGI * 160) +	\
-			((unsigned char)MCS);					\
-		}								\
-		else if (HTSetting.field.BW == BW_160) {			\
-			rate_index = 232 + ((Antenna - 1) * 10) +		\
-			((unsigned char)HTSetting.field.ShortGI * 160) +	\
-			((unsigned char)MCS);					\
-		}								\
-	}									\
-	else									\
-	if (HTSetting.field.MODE >= MODE_HTMIX)					\
-	{									\
-		rate_index = 12 + ((unsigned char)HTSetting.field.BW *24) + ((unsigned char)HTSetting.field.ShortGI *48) + ((unsigned char)HTSetting.field.MCS);	\
-	}									\
-	else									\
-	if (HTSetting.field.MODE == MODE_OFDM)					\
-		rate_index = (unsigned char)(HTSetting.field.MCS) + 4;		\
-	else if (HTSetting.field.MODE == MODE_CCK)				\
-		rate_index = (unsigned char)(HTSetting.field.MCS);		\
-										\
-	if (rate_index < 0)							\
-		rate_index = 0;							\
-										\
-	if (rate_index >= rate_count)						\
-		rate_index = rate_count-1;					\
-										\
-	return (MCSMappingRateTable[rate_index] * 5)/10;			\
-}
-#endif
 
 #if defined(RTCONFIG_HAS_5G)
 int FN_GETRATE(getRate,      MACHTTRANSMIT_SETTING_for_5G)		//getRate   (MACHTTRANSMIT_SETTING_for_5G)
