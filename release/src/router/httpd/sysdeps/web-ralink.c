@@ -406,7 +406,7 @@ int MCSMappingRateTable[] =
 #endif
 	};
 
-#if 0
+
 #define FN_GETRATE(_fn_, _st_)						\
 _fn_(_st_ HTSetting)							\
 {									\
