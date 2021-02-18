@@ -1605,28 +1605,13 @@ void start_dnsmasq(void)
 	if (nvram_match("dhcp_static_x","1")) {
 		write_static_leases(fp);
 	}
-#if defined(RTAC3200) || defined(RTAC85P) || defined(RMAC2100) || defined(RTE8820S)
-	if (!repeater_mode()) {
-		fprintf(fp, "dhcp-script=/sbin/dhcpc_lease\n");
-		fprintf(fp, "script-arp\n");
-	}
-#endif
-	append_custom_config("dnsmasq.conf", fp);
-	/* close fp move to the last */
 	fclose(fp);
-	use_custom_config("dnsmasq.conf", "/etc/dnsmasq.conf");
-	run_postconf("dnsmasq", "/etc/dnsmasq.conf");
-	chmod("/etc/dnsmasq.conf", 0644);
+
 	/* Create resolv.conf with empty nameserver list */
 	f_write(dmresolv, NULL, 0, FW_APPEND, 0666);
-#if defined(RTCONFIG_SMARTDNS)
 	/* Create resolv.dnsmasq with empty server list */
 	f_write(dmservers, NULL, 0, FW_APPEND, 0666);
-	f_write("/tmp/resolv.dnsmasq", NULL, 0, FW_APPEND, 0666);
-#else
-	/* Create resolv.dnsmasq with empty server list */
-	f_write(dmservers, NULL, 0, FW_APPEND, 0666);
-#endif
+
 #if (defined(RTCONFIG_TR069) && !defined(RTCONFIG_TR181))
 	eval("dnsmasq", "--log-async", "-6", "/sbin/dhcpc_lease");
 #else

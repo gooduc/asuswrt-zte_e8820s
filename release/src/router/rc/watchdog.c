@@ -7033,9 +7033,7 @@ void watchdog(int sig)
 	bs_pre = bs;
 #endif
 #endif
-#if defined(RTCONFIG_SOFTCENTER)
-	softcenter_sig_check();
-#endif
+
 	if (watchdog_period)
 		return;
 
