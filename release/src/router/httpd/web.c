@@ -188,7 +188,6 @@ extern int ssl_stream_fd;
 #endif
 
 #include <iboxcom.h>
-#include "sysinfo.h"
 #ifdef RTCONFIG_SOFTCENTER
 #include "dbapi.h"
 #endif
@@ -284,7 +283,7 @@ void response_nvram_config(webs_t wp, char *config_name, json_object *res, json_
 #ifdef RTCONFIG_CAPTCHA
 extern void do_captcha_file(char *url, FILE *stream);
 #endif
-extern int get_lang_num_merlinr();
+
 #if 0
 static int nvram_check_and_set(char *name, char *value);
 #endif
@@ -5852,7 +5851,7 @@ static int get_fanctrl_info(int eid, webs_t wp, int argc, char_t **argv)
 }
 #endif
 
-#if defined(RTCONFIG_BCMARM) || defined(RTCONFIG_QCA) || defined(RTCONFIG_LANTIQ) || defined(RTCONFIG_RALINK)
+#ifdef RTCONFIG_BCMARM
 static int get_cpu_temperature(int eid, webs_t wp, int argc, char_t **argv)
 {
 #ifdef HND_ROUTER
@@ -5865,27 +5864,6 @@ static int get_cpu_temperature(int eid, webs_t wp, int argc, char_t **argv)
 	}
 
 	return websWrite(wp, "%3.3f", (double) temperature / 1000);
-#elif defined(RTCONFIG_QCA)
-#if defined(RTAC82U)
-	return websWrite(wp, "0");//ipq401x not support
-#else
-	char temperature[6] = { 0 };
-
-	if (f_read_string("/sys/class/thermal/thermal_zone0/temp", temperature, sizeof(temperature)) <= 0)
-		*temperature = '\0';
-	return websWrite(wp, "%d", safe_atoi(temperature));
-#endif
-#elif defined(RTCONFIG_LANTIQ)
-	FILE *fp;
-	int temperature;
-	if ((fp = fopen("/sys/kernel/debug/ltq_tempsensor/allsensors", "r")) != NULL) {
-		fscanf(fp, "TS_CODE= %*[0-9]; TEMP   = %d; CH_SEL = %*[0-9]", &temperature);
-		fclose(fp);
-	}
-
-	return websWrite(wp, "%d", (temperature/1000));
-#elif defined(RTCONFIG_RALINK)
-	return websWrite(wp, "0");//mtk not support
 #else
 	FILE *fp;
 	int temperature = -1;
@@ -8188,60 +8166,6 @@ static int get_client_detail_info(struct json_object *clients, struct json_objec
 	if(custom_attr_get)
 		json_object_put(custom_attr_get);
 	CLIENT_DPRINTF("get_client_detail_info finish\n");
-
-	return 0;
-}
-
-static int ej_get_clientlist_maclist(int eid, webs_t wp, int argc, char_t **argv)
-{
-        if(!pids("networkmap")){
-                websWrite(wp, "[]");
-                return 0;
-        }
-
-	struct json_object *macArray = json_object_new_array();
-	P_CLIENT_DETAIL_INFO_TABLE p_client_info_tab;
-	void *shared_client_info = (void *) 0;
-	char mac_buf[32];
-	int i, lock, shm_client_info_id;
-
-	lock = file_lock("networkmap");
-	shm_client_info_id = shmget((key_t)SHMKEY_LAN, sizeof(CLIENT_DETAIL_INFO_TABLE), 0666|IPC_CREAT);
-	if (shm_client_info_id == -1){
-		fprintf(stderr,"shmget failed\n");
-		file_unlock(lock);
-		websWrite(wp, "[]");
-		return 0;
-	}
-
-	shared_client_info = shmat(shm_client_info_id,(void *) 0,0);
-	if (shared_client_info == (void *)-1){
-		fprintf(stderr, "shmat failed\n");
-		file_unlock(lock);
-		websWrite(wp, "[]");
-		return 0;
-	}
-
-	p_client_info_tab = (P_CLIENT_DETAIL_INFO_TABLE)shared_client_info;
-	for(i = 0; i < p_client_info_tab->ip_mac_num; i++) {
-		if(p_client_info_tab->device_flag[i]&(1<<FLAG_EXIST)) {
-			memset(mac_buf, 0, sizeof(mac_buf));
-			sprintf(mac_buf, "%02X:%02X:%02X:%02X:%02X:%02X",
-				p_client_info_tab->mac_addr[i][0],p_client_info_tab->mac_addr[i][1],
-				p_client_info_tab->mac_addr[i][2],p_client_info_tab->mac_addr[i][3],
-				p_client_info_tab->mac_addr[i][4],p_client_info_tab->mac_addr[i][5]
-				);
-			json_object_array_add(macArray, json_object_new_string(mac_buf));
-		}
-	}
-
-	shmdt(shared_client_info);
-	file_unlock(lock);
-
-	websWrite(wp, "%s", json_object_to_json_string(macArray));
-
-	if(macArray)
-		json_object_put(macArray);
 
 	return 0;
 }
@@ -24342,8 +24266,7 @@ struct ej_handler ej_handlers[] = {
 #endif
 	{ "get_default_reboot_time", ej_get_default_reboot_time},
 	{ "radio_status", ej_radio_status},
-	{ "asus_sysinfo", ej_sysinfo},
-	{ "sysinfo", ej_show_sysinfo},
+	{ "sysinfo", ej_sysinfo},
 #ifdef RTCONFIG_OPENVPN
 	{ "vpn_server_get_parameter", ej_vpn_server_get_parameter},
 	{ "vpn_client_get_parameter", ej_vpn_client_get_parameter},

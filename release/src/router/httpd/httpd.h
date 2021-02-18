@@ -33,17 +33,6 @@
 #endif
 #include <rtconfig.h>
 #include "merlinr.h"
-/* DEBUG DEFINE */
-#define HTTPD_DEBUG             "/tmp/HTTPD_DEBUG"
-
-/* DEBUG FUNCTION */
-
-#define HTTPD_DBG(fmt,args...) \
-        if(f_exists(HTTPD_DEBUG) > 0) { \
-                char info[1024]; \
-                snprintf(info, sizeof(info), "echo \"[HTTPD][%s:(%d)]"fmt"\" >> /tmp/HTTPD_DEBUG.log", __FUNCTION__, __LINE__, ##args); \
-                system(info); \
-        }
 
 /* Basic authorization userid and passwd limit */
 #define AUTH_MAX 64
