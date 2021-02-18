@@ -90,10 +90,6 @@ MODEL = $(subst -,,$(subst +,P,$(BUILD_NAME)))
 endif
 export CFLAGS += -D$(MODEL)
 export $(MODEL)=y
-export CFLAGS += -D$(MERLINR_NAME)
-export $(MERLINR_NAME)=y
-export CFLAGS += -DMERLINR_VER_MAJOR_$(MERLINR_VER_MAJOR)
-export MERLINR_VER_MAJOR_$(MERLINR_VER_MAJOR)=y
 
 export OLD_SRC=$(SRCBASE)/../src
 ifeq ($(RTCONFIG_REALTEK),y)
@@ -730,13 +726,6 @@ obj-$(RTCONFIG_OPENVPN) += libvpn
 obj-y += rc
 obj-y += rom
 obj-y += others
-ifeq ($(RTCONFIG_SOFTCENTER),y)
-obj-y += skipdbv2 libev-4.22 softcenter libiconv-1.14
-#obj-y += httpdb mbedtls-2.6.0
-obj-y += ipset libmnl-1.0.4 libnfnetlink-1.0.1
-endif
-obj-y += dbus-1.8.8 libpcap
-obj-y += readline-6.2
 obj-y += libpasswd
 obj-y += httpd json-c
 obj-$(RTCONFIG_VISUALIZATION) += sqlite3 json-c libxml2 visdcoll visdcon
@@ -2174,9 +2163,6 @@ roldconf: config/conf
 	$(MAKE) shared-clean libdisk-clean rc-clean nvram$(BCMEX)$(EX7)-clean httpd-clean prebuilt-clean libbcmcrypto-clean
 #	@$(MAKE) iptables-clean ebtables-clean pppd-clean zebra-clean openssl-clean mssl-clean pppd-clean
 	$(MAKE) dnsmasq-clean iproute2-clean networkmap-clean
-ifeq ($(RTCONFIG_SOFTCENTER),y)
-	$(MAKE) skipdbv2-clean libev-4.22-clean
-endif
 ifeq ($(RTCONFIG_BCMARM),y)
 	$(MAKE) compressed-clean
 endif
@@ -2334,101 +2320,6 @@ endif
 bonnie-clean:
 	[ ! -f bonnie/Makefile ] || $(MAKE) -C bonnie clean
 	@rm -f bonnie/Makefile
-
-libnfnetlink-1.0.1: libnfnetlink-1.0.1/Makefile
-	$(MAKE) -C libnfnetlink-1.0.1
-
-libnfnetlink-1.0.1/Makefile:
-	$(MAKE) libnfnetlink-1.0.1-configure
-
-libnfnetlink-1.0.1-configure:
-	( cd libnfnetlink-1.0.1 && autoreconf -i -f ; \
-		$(CONFIGURE) \
-		--prefix=/usr \
-		--bindir=/usr/sbin \
-		--libdir=/usr/lib \
-	)
-
-libnfnetlink-1.0.1-install:
-	install -D libnfnetlink-1.0.1/src/.libs/libnfnetlink.so $(INSTALLDIR)/libnfnetlink-1.0.1/usr/lib/libnfnetlink.so.0
-	$(STRIP) $(INSTALLDIR)/libnfnetlink-1.0.1/usr/lib/libnfnetlink.so.0
-
-libnfnetlink-1.0.1-clean:
-	-@$(MAKE) -C  libnfnetlink-1.0.1 clean
-
-libmnl-1.0.4: libmnl-1.0.4/Makefile
-	$(MAKE) -C libmnl-1.0.4
-
-libmnl-1.0.4/Makefile:
-	(cd libmnl-1.0.4 && autoreconf -i -f)
-	$(MAKE) libmnl-1.0.4-configure
-
-libmnl-1.0.4-configure:
-	( cd libmnl-1.0.4 ; \
-		$(CONFIGURE) \
-		--prefix=/usr \
-		--bindir=/usr/sbin \
-		--libdir=/usr/lib \
-	)
-
-libmnl-1.0.4-install:
-	install -D libmnl-1.0.4/src/.libs/libmnl.so $(INSTALLDIR)/libmnl-1.0.4/usr/lib/libmnl.so.0
-	$(STRIP) $(INSTALLDIR)/libmnl-1.0.4/usr/lib/libmnl.so.0
-
-libmnl-1.0.4-clean:
-	-@$(MAKE) -C libmnl-1.0.4 clean
-
-libnetfilter_conntrack-1.0.7: libnfnetlink-1.0.1 libmnl-1.0.4 libnetfilter_conntrack-1.0.7/Makefile
-	$(MAKE) -C libnetfilter_conntrack-1.0.7
-
-libnetfilter_conntrack-1.0.7/Makefile:
-	(cd libnetfilter_conntrack-1.0.7 && autoreconf -i -f)
-	$(MAKE) libnetfilter_conntrack-1.0.7-configure
-
-libnetfilter_conntrack-1.0.7-configure:
-	( cd libnetfilter_conntrack-1.0.7 ; \
-		LIBNFNETLINK_CFLAGS="-L$(TOP)/libnfnetlink-1.0.1/src/.libs" \
-		LIBNFNETLINK_LIBS="-lnfnetlink" \
-		LIBMNL_CFLAGS="-L$(TOP)/libmnl-1.0.4/src/.libs" \
-		LIBMNL_LIBS="-lmnl" \
-		CFLAGS="$(CFLAGS) -I$(TOP)/libnfnetlink-1.0.1/include/ -I$(TOP)/libmnl-1.0.4/include -L$(TOP)/libnfnetlink-1.0.1/src/.libs -lnfnetlink -L$(TOP)/libmnl-1.0.4/src/.libs -lmnl" \
-		$(CONFIGURE) \
-		--prefix=/usr \
-		--bindir=/usr/sbin \
-		--libdir=/usr/lib \
-	)
-
-libnetfilter_conntrack-1.0.7-install:
-	install -D libnetfilter_conntrack-1.0.7/src/.libs/libnetfilter_conntrack.so $(INSTALLDIR)/libnetfilter_conntrack-1.0.7/usr/lib/libnetfilter_conntrack.so.3
-	$(STRIP) $(INSTALLDIR)/libnetfilter_conntrack-1.0.7/usr/lib/libnetfilter_conntrack.so.3
-
-libnetfilter_conntrack-1.0.7-clean:
-	-@$(MAKE) -C libnetfilter_conntrack-1.0.7 clean
-
-libnetfilter_cttimeout-1.0.0: libnetfilter_cttimeout-1.0.0/Makefile
-	$(MAKE) -C libnetfilter_cttimeout-1.0.0
-
-libnetfilter_cttimeout-1.0.0/Makefile:
-	(cd libnetfilter_cttimeout-1.0.0 && autoreconf -i -f)
-	$(MAKE) libnetfilter_cttimeout-1.0.0-configure
-
-libnetfilter_cttimeout-1.0.0-configure:
-	( cd libnetfilter_cttimeout-1.0.0 ; \
-		LIBMNL_CFLAGS="-L$(TOP)/libmnl-1.0.4/src/.libs" \
-		LIBMNL_LIBS="-lmnl" \
-		CFLAGS="$(CFLAGS) -I$(TOP)/libmnl-1.0.4/include -L$(TOP)/libmnl-1.0.4/src/.libs -lmnl" \
-		$(CONFIGURE) \
-		--prefix=/usr \
-		--bindir=/usr/sbin \
-		--libdir=/usr/lib \
-	)
-
-libnetfilter_cttimeout-1.0.0-install:
-	install -D libnetfilter_cttimeout-1.0.0/src/.libs/libnetfilter_cttimeout.so $(INSTALLDIR)/libnetfilter_cttimeout-1.0.0/usr/lib/libnetfilter_cttimeout.so.1
-	$(STRIP) $(INSTALLDIR)/libnetfilter_cttimeout-1.0.0/usr/lib/libnetfilter_cttimeout.so.1
-
-libnetfilter_cttimeout-1.0.0-clean:
-	-@$(MAKE) -C libnetfilter_cttimeout-1.0.0 clean
 
 stress-1.x: stress-1.x/Makefile
 	$(MAKE) -C stress-1.x
@@ -2951,88 +2842,6 @@ endif
 iptables-1.4.x-clean:
 	[ ! -f iptables-1.4.x/Makefile ] || $(MAKE) -C iptables-1.4.x KERNEL_DIR=$(LINUX_INC_DIR) distclean
 	@rm -f iptables-1.4.x/Makefile
-
-ifeq ($(RTCONFIG_SOFTCENTER),y)
-libev-4.22/configure:
-	cd libev-4.22 && ./autogen.sh
-
-libev-4.22/Makefile: libev-4.22/configure
-	cd libev-4.22 && $(CONFIGURE)\
-		--target=arm-linux --host=arm-linux --build=x86_64-linux-gnu --program-prefix= --program-suffix= \
-		--prefix=/usr --exec-prefix=/usr --bindir=/usr/bin --sbindir=/usr/sbin --libexecdir=/usr/lib --sysconfdir=/etc \
-		--datadir=/usr/share --localstatedir=/var --mandir=/usr/man --infodir=/usr/info --disable-nls --enable-shared --enable-static
-
-libev-4.22: libev-4.22/Makefile
-	$(MAKE) -C $@ && $(MAKE) $@-stage
-
-libev-4.22-clean:
-	[ ! -f libev-4.22/Makefile ] || $(MAKE) -C libev-4.22 -f Makefile distclean
-	@rm -f libev.la
-	@rm -f libev-4.22/stamp-h1
-	@rm -f libev-4.22/.libs
-	@rm -f libev-4.22/.deps
-
-libev-4.22-install:
-	install -D $(STAGEDIR)/usr/lib/libev.so.4.0.0 $(INSTALLDIR)/libev-4.22/usr/lib/libev.so.4.0.0
-	$(STRIP) $(INSTALLDIR)/libev-4.22/usr/lib/libev.so.4.0.0
-	cd $(INSTALLDIR)/libev-4.22/usr/lib && \
-		ln -sf libev.so.4.0.0 libev.so.4 && \
-		ln -sf libev.so.4.0.0 libev.so
-
-skipdbv2/Makefile: skipdbv2/CMakeLists.txt
-	cd skipdbv2 && cmake -DCMAKE_INSTALL_PREFIX=/usr \
-	-DCMAKE_BUILD_TYPE=Release \
-	-DCMAKE_EXE_LINKER_FLAGS="-L$(STAGEDIR)/usr/lib -lev" \
-	-DLIBEV_INCLUDE_DIRS="$(TOP)/libev-4.22" \
-	-DLIBEV_LIBRARIES="$(TOP)/libev-4.22/.libs"
-
-skipdbv2: libev-4.22 skipdbv2/Makefile
-	$(MAKE) -C $@
-
-skipdbv2-clean:
-	[ ! -f skipdbv2/Makefile ] || $(MAKE) -C skipdbv2 -f Makefile clean
-	@rm -rf skipdbv2/bin
-	@rm -rf skipdbv2/lib
-	@rm -rf skipdbv2/CMakeFiles
-	@rm -f skipdbv2/CMakeCache.txt
-	@rm -f skipdbv2/cmake_install.cmake
-	@rm -f skipdbv2/Makefile
-
-skipdbv2-install: skipdbv2
-	install -D skipdbv2/bin/skipd $(INSTALLDIR)/skipdbv2/usr/sbin/skipd
-	install -D skipdbv2/bin/dbus $(INSTALLDIR)/skipdbv2/usr/sbin/dbus
-	$(STRIP) $(INSTALLDIR)/skipdbv2/usr/sbin/skipd
-	$(STRIP) $(INSTALLDIR)/skipdbv2/usr/sbin/dbus
-
-ipset/stamp-h1: libmnl-1.0.4
-	cd $(TOP)/ipset && CC=$(CC) \
-	autoreconf -i -f && \
-	CFLAGS="-Os -Wall $(EXTRACFLAGS) -ffunction-sections -fdata-sections" \
-	LDFLAGS="-ffunction-sections -fdata-sections -Wl,--gc-sections" \
-	libmnl_CFLAGS="-I$(TOP)/libmnl-1.0.4/include" \
-	libmnl_LIBS="-L$(TOP)/libmnl-1.0.4/src/.libs -lmnl" \
-	$(CONFIGURE) --prefix=/usr --with-kmod=no --with-kbuild=$(LINUXDIR)
-	touch ipset/stamp-h1
-
-ipset: ipset/stamp-h1
-	$(MAKE) -C ipset
-	$(MAKE) -C ipset modules
-
-ipset-install:
-	install -D ipset/src/ipset $(INSTALLDIR)/ipset/usr/sbin/ipset
-	install -d $(INSTALLDIR)/ipset/usr/lib/
-	install ipset/lib/.libs/libipset.so.3.6.0 $(INSTALLDIR)/ipset/usr/lib/libipset.so.3.6.0
-	$(STRIP) $(INSTALLDIR)/ipset/usr/lib/libipset.so.3.6.0
-	$(STRIP) $(INSTALLDIR)/ipset/usr/sbin/ipset
-	cd $(INSTALLDIR)/ipset/usr/lib/ && \
-		ln -sf libipset.so.3.6.0 libipset.so.3 && \
-		ln -sf libipset.so.3.6.0 libipset.so
-
-ipset-clean:
-	-@$(MAKE) -C ipset clean
-	-@$(MAKE) -C ipset modules_clean
-	-@rm -rf ipset/Makefile ipset/stamp-h1
-endif
 
 miniupnpd/config.h: shared/version.h
 	cd miniupnpd && ./genconfig.sh --vendorcfg --leasefile
@@ -3926,9 +3735,9 @@ libpcap: libpcap/stamp-h1
 
 libpcap-install: libpcap
 	@echo "do nothing"
-	install -D libpcap/libpcap.so.1.5.3 $(INSTALLDIR)/libpcap/usr/lib/libpcap.so.1.5.3
-	$(STRIP) $(INSTALLDIR)/libpcap/usr/lib/libpcap.so.1.5.3
-	cd $(INSTALLDIR)/libpcap/usr/lib && ln -sf libpcap.so.1.5.3 libpcap.so
+	#install -D libpcap/libpcap.so.1.4.0 $(INSTALLDIR)/libpcap/usr/lib/libpcap.so.1.4.0
+	#$(STRIP) $(INSTALLDIR)/libpcap/usr/lib/libpcap.so.1.4.0
+	#cd $(INSTALLDIR)/libpcap/usr/lib && ln -sf libpcap.so.1.4.0 libpcap.so
 
 libpcap-clean:
 	[ ! -f libpcap/Makefile ] || $(MAKE) -C libpcap clean
