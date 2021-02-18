@@ -5274,57 +5274,6 @@ void dnsmasq_check()
 	}
 }
 
-#if defined(RTCONFIG_SOFTCENTER)
-static void softcenter_sig_check()
-{
-	//1=wan,2=nat,3=mount
-	if(nvram_match("sc_installed", "1")){
-		if(nvram_match("sc_wan_sig", "1")) {
-			if(nvram_match("sc_mount", "1")) {
-				if(f_exists("/jffs/softcenter/bin/softcenter.sh")) {
-					softcenter_eval(SOFTCENTER_WAN);
-					nvram_set_int("sc_wan_sig", 0);
-				}
-			} else {
-				softcenter_eval(SOFTCENTER_WAN);
-				nvram_set_int("sc_wan_sig", 0);
-			}
-		}
-		if(nvram_match("sc_nat_sig", "1")) {
-			if(nvram_match("sc_mount", "1")) {
-				if(f_exists("/jffs/softcenter/bin/softcenter.sh")) {
-					softcenter_eval(SOFTCENTER_NAT);
-					nvram_set_int("sc_nat_sig", 0);
-				}
-			} else {
-				softcenter_eval(SOFTCENTER_NAT);
-				nvram_set_int("sc_nat_sig", 0);
-			}
-		}
-		if(nvram_match("sc_mount_sig", "1")) {
-			if(f_exists("/jffs/softcenter/bin/softcenter.sh")) {
-				softcenter_eval(SOFTCENTER_MOUNT);
-				nvram_set_int("sc_mount_sig", 0);
-			} else if(!f_exists("/jffs/softcenter/bin/softcenter.sh") && nvram_match("sc_mount", "1")) {
-				//remount to sdb sdc not sda
-				doSystem("sh /jffs/softcenter/automount.sh &");
-			}
-		}
-		if(nvram_match("sc_services_sig", "1")) {
-			if(f_exists("/jffs/softcenter/bin/softcenter.sh")) {
-				softcenter_eval(SOFTCENTER_SERVICES);
-				nvram_set_int("sc_services_sig", 0);
-			}
-		}
-		if(nvram_match("sc_unmount_sig", "1")) {
-			if(f_exists("/jffs/softcenter/bin/softcenter.sh")) {
-				softcenter_eval(SOFTCENTER_UNMOUNT);
-				nvram_set_int("sc_unmount_sig", 0);
-			}
-		}
-	}
-}
-#endif
 #ifdef RTCONFIG_NEW_USER_LOW_RSSI
 void roamast_check()
 {
