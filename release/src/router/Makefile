@@ -2334,6 +2334,7 @@ endif
 bonnie-clean:
 	[ ! -f bonnie/Makefile ] || $(MAKE) -C bonnie clean
 	@rm -f bonnie/Makefile
+
 libnfnetlink-1.0.1: libnfnetlink-1.0.1/Makefile
 	$(MAKE) -C libnfnetlink-1.0.1
 
@@ -3031,46 +3032,6 @@ ipset-clean:
 	-@$(MAKE) -C ipset clean
 	-@$(MAKE) -C ipset modules_clean
 	-@rm -rf ipset/Makefile ipset/stamp-h1
-
-mbedtls-2.6.0/stamp-h1:
-	cd mbedtls-2.6.0 && cmake -DCMAKE_INSTALL_PREFIX=/usr \
-	-DUSE_SHARED_MBEDTLS_LIBRARY=ON \
-	-DENABLE_TESTING=OFF \
-	-DENABLE_PROGRAMS=ON
-
-mbedtls-2.6.0: mbedtls-2.6.0/stamp-h1
-	$(MAKE) -C $@
-
-mbedtls-2.6.0-clean:
-	[ ! -f mbedtls-2.16.3/Makefile ] || $(MAKE) -C mbedtls-2.16.3 -f Makefile clean
-
-mbedtls-2.6.0-install: mbedtls-2.6.0
-	install -D mbedtls-2.6.0/library/libmbedtls.so.2.6.0 $(INSTALLDIR)/mbedtls-2.6.0/usr/lib/libmbedtls.so.2.6.0
-	install -D mbedtls-2.6.0/library/libmbedcrypto.so.2.6.0 $(INSTALLDIR)/mbedtls-2.6.0/usr/lib/libmbedcrypto.so.2.6.0
-	install -D mbedtls-2.6.0/library/libmbedx509.so.2.6.0 $(INSTALLDIR)/mbedtls-2.6.0/usr/lib/libmbedx509.so.2.6.0
-	$(STRIP) $(INSTALLDIR)/mbedtls-2.6.0/usr/lib/libmbedtls.so.2.6.0
-	$(STRIP) $(INSTALLDIR)/mbedtls-2.6.0/usr/lib/libmbedcrypto.so.2.6.0
-	$(STRIP) $(INSTALLDIR)/mbedtls-2.6.0/usr/lib/libmbedx509.so.2.6.0
-	cd $(INSTALLDIR)/mbedtls-2.6.0/usr/lib && ln -sf libmbedtls.so.2.6.0 libmbedtls.so.10 && \
-		ln -sf libmbedtls.so.2.6.0 libmbedtls.so && ln -sf libmbedcrypto.so.2.6.0 libmbedcrypto.so.0 && \
-		ln -sf libmbedcrypto.so.2.6.0 libmbedcrypto.so && ln -sf libmbedx509.so.2.6.0 libmbedx509.so.0 && \
-		ln -sf libmbedx509.so.2.6.0 libmbedx509.so
-
-httpdb/Makefile: mbedtls-2.6.0
-	cd httpdb && cmake -DCMAKE_INSTALL_PREFIX=/usr \
-	-DCMAKE_BUILD_TYPE=Release \
-	-DMBEDTLS="$(TOP)/mbedtls-2.6.0/"
-
-httpdb: httpdb/Makefile
-	$(MAKE) -C $@
-
-httpdb-clean:
-	[ ! -f httpdb/Makefile ] || $(MAKE) -C httpdb -f Makefile clean
-	@rm -f httpdb/Makefile
-
-httpdb-install: httpdb
-	install -D httpdb/bin/httpdb $(INSTALLDIR)/httpdb/usr/sbin/httpdb
-	$(STRIP) $(INSTALLDIR)/httpdb/usr/sbin/httpdb
 endif
 
 miniupnpd/config.h: shared/version.h
