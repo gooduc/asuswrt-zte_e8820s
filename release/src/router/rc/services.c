@@ -1641,10 +1641,10 @@ void reload_dnsmasq(void)
 	kill_pidfile_s("/var/run/dnsmasq.pid", SIGHUP);
 }
 #if defined(RTCONFIG_SOFTCENTER)
-	if(nvram_get("sc_dhcp_script"))
+	if(nvram_get("sc_dhcp_script")) {
 		doSystem("/jffs/softcenter/scripts/%s",nvram_get("sc_dhcp_script"));
+	}
 #endif
-	return 0;
 
 #ifdef RTCONFIG_IPV6
 void add_ip6_lanaddr(void)
