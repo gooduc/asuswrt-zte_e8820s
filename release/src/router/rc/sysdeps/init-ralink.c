@@ -1047,8 +1047,8 @@ void init_wl(void)
 	if (!module_loaded("mt_wifi"))
 		modprobe("mt_wifi");
 #else
-	if (!module_loaded("mt76x3_ap"))
-		modprobe("mt76x3_ap");
+	if (!module_loaded("mt7603_wifi"))
+		modprobe("mt7603_wifi");
 #endif
 #endif
 
@@ -1104,8 +1104,8 @@ void fini_wl(void)
 	if (module_loaded("mt_wifi"))
 		modprobe_r("mt_wifi");
 #else
-	if (module_loaded("mt76x3_ap"))
-		modprobe_r("mt76x3_ap");
+	if (module_loaded("mt7603_wifi"))
+		modprobe_r("mt7603_wifi");
 #endif
 #endif
 #if defined (RTCONFIG_WLMODULE_RT3352_INIC_MII)
