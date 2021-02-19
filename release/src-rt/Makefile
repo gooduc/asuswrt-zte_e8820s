@@ -2616,10 +2616,6 @@ define RouterOptions
 		sed -i "/RTCONFIG_UUPLUGIN/d" $(1); \
 		echo "RTCONFIG_UUPLUGIN=y" >>$(1); \
 	fi; \
-	if [ "$(SOFTCENTER)" = "y" ]; then \
-	sed -i "/RTCONFIG_SOFTCENTER/d" $(1); \
-	echo "RTCONFIG_SOFTCENTER=y" >>$(1); \
-	fi; \
 	)
 	$(call platformRouterOptions, $(1))
 endef
@@ -4131,7 +4127,7 @@ endif
 		sed -i "/RTCONFIG_WLMODULE_RLT_WIFI/d" router/.config; \
 		echo "RTCONFIG_WLMODULE_RLT_WIFI=y" >> router/.config; \
 	fi
-	@if grep -q "CONFIG_RALINK_MT7603E=y" $(LINUXDIR)/.config ; then \
+	@if grep -q "CONFIG_MT7603E_RLT_WIFI=m" $(LINUXDIR)/.config ; then \
 		sed -i "/RTCONFIG_WLMODULE_MT7603E_AP/d" router/.config; \
 		echo "RTCONFIG_WLMODULE_MT7603E_AP=y" >> router/.config; \
 	fi
